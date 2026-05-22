@@ -1550,47 +1550,91 @@ const GAME_CONFIGS = {
 };
 
 // Dynamic paylines depending on rows x cols
+// Each payline = array of length `cols`, where value = row index for that column
+// Patterns: horizontal (flat), diagonal (/, \), zigzag (V, ^)
 function getPaylines(rows, cols) {
   if (rows === 1) {
-    return [ Array(cols).fill(0) ]; // 1 line
+    // Only one possible line
+    return [ Array(cols).fill(0) ]; // 1 line: ————
   }
+
   if (rows === 2 && cols === 3) {
     return [
-      [0,0,0],
-      [1,1,1],
-      [0,1,0],
-    ]; // 3 lines
-  }
-  if (rows === 2 && cols === 4) {
-    return [
-      [0,0,0,0],
-      [1,1,1,1],
-      [0,1,1,0],
-      [1,0,0,1],
-    ]; // 4 lines
-  }
-  if (rows === 3 && cols === 4) {
-    return [
-      [1,1,1,1],
-      [0,0,0,0],
-      [2,2,2,2],
-      [0,1,2,1],
-      [2,1,0,1],
-      [0,0,1,2],
+      // Horizontals
+      [0,0,0],   // Linie 1: ————  (oben)
+      [1,1,1],   // Linie 2: ————  (unten)
+      // Diagonals
+      [0,0,1],   // Linie 3: ↘  (oben-links → unten-rechts)
+      [1,1,0],   // Linie 4: ↗  (unten-links → oben-rechts)
+      // Zickzack
+      [0,1,0],   // Linie 5: ∨  (oben → unten → oben)
+      [1,0,1],   // Linie 6: ∧  (unten → oben → unten)
     ]; // 6 lines
   }
-  // 3x5: 9 lines (original)
+
+  if (rows === 2 && cols === 4) {
+    return [
+      // Horizontals
+      [0,0,0,0],   // Linie 1: ————  (oben)
+      [1,1,1,1],   // Linie 2: ————  (unten)
+      // Diagonals
+      [0,0,0,1],   // Linie 3: ↘  sanft
+      [1,1,1,0],   // Linie 4: ↗  sanft
+      [0,0,1,1],   // Linie 5: ↘  steil
+      [1,1,0,0],   // Linie 6: ↗  steil
+      // Zickzack
+      [0,1,0,1],   // Linie 7: ∧∨  alternierend
+      [1,0,1,0],   // Linie 8: ∨∧  alternierend
+    ]; // 8 lines
+  }
+
+  if (rows === 3 && cols === 4) {
+    return [
+      // Horizontals (3 Linien)
+      [0,0,0,0],   // Linie 1: ————  (oben)
+      [1,1,1,1],   // Linie 2: ————  (mitte)
+      [2,2,2,2],   // Linie 3: ————  (unten)
+      // Diagonals (4 Linien)
+      [0,1,2,2],   // Linie 4: ↘  (oben → mitte → unten → unten)
+      [2,1,0,0],   // Linie 5: ↗  (unten → mitte → oben → oben)
+      [0,0,1,2],   // Linie 6: ↘  (oben → oben → mitte → unten)
+      [2,2,1,0],   // Linie 7: ↗  (unten → unten → mitte → oben)
+      // Zickzack V-Form (3 Linien)
+      [0,1,2,1],   // Linie 8:  ∨  (oben → mitte → unten → mitte)
+      [2,1,0,1],   // Linie 9:  ∧  (unten → mitte → oben → mitte)
+      [0,2,0,2],   // Linie 10: extremes Zickzack
+    ]; // 10 lines
+  }
+
+  // 3x5: 20 sinnvolle Linien
   return [
-    [1,1,1,1,1],
-    [0,0,0,0,0],
-    [2,2,2,2,2],
-    [0,1,2,1,0],
-    [2,1,0,1,2],
-    [0,0,1,2,2],
-    [2,2,1,0,0],
-    [1,0,0,0,1],
-    [1,2,2,2,1],
-  ];
+    // Horizontals (3 Linien)
+    [0,0,0,0,0],   // Linie 1:  ————  (oben)
+    [1,1,1,1,1],   // Linie 2:  ————  (mitte)
+    [2,2,2,2,2],   // Linie 3:  ————  (unten)
+    // Volle Diagonalen (2 Linien)
+    [0,1,2,2,2],   // Linie 4:  ↘  oben-links → unten-rechts
+    [2,1,0,0,0],   // Linie 5:  ↗  unten-links → oben-rechts
+    // Sanfte Diagonalen (4 Linien)
+    [0,0,1,2,2],   // Linie 6:  ↘ sanft (rechts)
+    [2,2,1,0,0],   // Linie 7:  ↗ sanft (rechts)
+    [0,0,0,1,2],   // Linie 8:  ↘ sehr sanft
+    [2,2,2,1,0],   // Linie 9:  ↗ sehr sanft
+    // V-Form Zickzack (4 Linien)
+    [0,1,2,1,0],   // Linie 10: ∨  großes V
+    [2,1,0,1,2],   // Linie 11: ∧  großes ∧
+    [1,2,2,2,1],   // Linie 12: ⌣  flaches U
+    [1,0,0,0,1],   // Linie 13: ⌢  flaches ∩
+    // Treppe (4 Linien)
+    [0,0,1,1,2],   // Linie 14: ↘ Treppe abwärts
+    [2,2,1,1,0],   // Linie 15: ↗ Treppe aufwärts
+    [0,1,1,2,2],   // Linie 16: ↘ Treppe abwärts (versetzt)
+    [2,1,1,0,0],   // Linie 17: ↗ Treppe aufwärts (versetzt)
+    // Wellenmuster (3 Linien)
+    [1,0,1,2,1],   // Linie 18: ~ Welle aufwärts
+    [1,2,1,0,1],   // Linie 19: ~ Welle abwärts
+    [0,2,1,2,0],   // Linie 20: ~ extremes Wellenmuster
+  ]; // 20 lines
 }
 
 let slotGrid = []; // variable rows x cols
