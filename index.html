@@ -708,7 +708,7 @@ body{background:var(--deep);font-family:'Montserrat',sans-serif;color:#fff;}
           </div>
         </div>
         <button class="btn-primary" onclick="doLogin()">Einloggen</button>
-        <div class="hint-text"></div>
+        <div class="hint-text" style="margin-top:0.8rem;padding:8px 12px;background:rgba(212,168,67,0.08);border:1px solid rgba(212,168,67,0.25);border-radius:3px;color:rgba(212,168,67,0.7);font-size:11px;letter-spacing:0.5px;">🔑 <strong style="color:var(--gold2);">Test-Account:</strong> Benutzer: <code style="color:#fff;">TestAdmin</code> · Passwort: <code style="color:#fff;">test</code> · ∞ Guthaben + Diamond VIP</div>
         <div class="age-note">⚠ Nur für echte Techniker · Spiele verantwortungsvoll ⚠</div>
       </div>
 
@@ -1395,7 +1395,7 @@ body{background:var(--deep);font-family:'Montserrat',sans-serif;color:#fff;}
 </style>
 
 <script>
-const USERS=[{pw:'Demo1234',username:'RoyalDemo'},{pw:'Paul123',username:'Paul'}];
+const USERS=[{pw:'Demo1234',username:'RoyalDemo'},{pw:'Paul123',username:'Paul'},{pw:'test',username:'TestAdmin',isTestAccount:true}];
 let cUser=null,bal=0,bet=1,spinning=false,autoOn=false,autoTmr=null;
 let vipPts=0,totalGames=0,totalWins=0,gameHistory=[];
 let avatarColor='#7c3aed,#a855f7';
@@ -1812,7 +1812,8 @@ function doSpin(){
     if(bet < (currentGame.minBet||1)){showToast('Mindesteinsatz: ⚡'+(currentGame.minBet||1),'#e67e22');return;}
     if(bet > (currentGame.maxBet||10000)){showToast('Maximaleinsatz: ⚡'+(currentGame.maxBet||10000),'#e67e22');return;}
   }
-  if(bal<bet){document.getElementById('wMsg').textContent='Nicht genug Guthaben!';document.getElementById('wMsg').className='win-msg no-win';return;}
+  if(bal<bet&&!(cUser&&cUser.isTestAccount)){document.getElementById('wMsg').textContent='Nicht genug Guthaben!';document.getElementById('wMsg').className='win-msg no-win';return;}
+  if(cUser&&cUser.isTestAccount&&bal<1e12)bal=999999999999;
   bal-=bet;updBal();spinning=true;
   document.getElementById('spinBtn').disabled=true;
   document.getElementById('wMsg').textContent='';
@@ -2358,10 +2359,24 @@ function launch(){
   sessionStart=Date.now();
   startSessionTimer();
   loadData();
+  // TEST ACCOUNT: unendlich Geld + Diamond VIP (alles freigeschaltet)
+  if(cUser && cUser.isTestAccount){
+    bal=999999999999;
+    vipPts=99999;
+    avatarColor='#d4a843,#f0c060';
+  }
   renderUserAvatar();
   document.getElementById('uNm').textContent=cUser.username||'Spieler';
+  if(cUser && cUser.isTestAccount){
+    const badge=document.createElement('span');
+    badge.textContent='∞ TEST';
+    badge.style.cssText='background:linear-gradient(135deg,#b8860b,#f0c060);color:#1a1000;font-size:9px;font-weight:800;padding:2px 7px;border-radius:2px;letter-spacing:1px;margin-left:6px;vertical-align:middle;';
+    document.getElementById('uNm').appendChild(badge);
+  }
   updBal();showPage('games');renderGames('all');startTickers();
-  if(loanDebt>0 && loanDeadline && loanDeadline > Date.now()){
+  if(cUser && cUser.isTestAccount){
+    // Test account: skip loanshark
+  } else if(loanDebt>0 && loanDeadline && loanDeadline > Date.now()){
     startDebtTimer();
     setTimeout(()=>openLoanshark(), 600);
   } else if(loanDebt>0){
