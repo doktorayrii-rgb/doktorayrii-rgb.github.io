@@ -1,15 +1,64 @@
 
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&family=Oswald:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&family=Oswald:wght@400;500;600;700&family=Orbitron:wght@500;600;700;800;900&family=Rajdhani:wght@500;600;700&display=swap');
 
 *{box-sizing:border-box;margin:0;padding:0;}
 :root{
-  --gold:#d4a843;--gold2:#f0c060;--gold3:#ffe08a;
-  --deep:#06040f;--panel:#0e0b1e;--card:#14102a;--card2:#1a1535;
-  --red:#c0392b;--red2:#e74c3c;--green:#1a8a4a;--green2:#27ae60;
-  --border:#2a2050;--neon:#7c3aed;
+  /* WERKSTATT – Industrie-Metall, Warngelb, Öl-Schwarz, Sicherheits-Orange */
+  --amber:#f5a623; --amber2:#ffb733; --amber3:#ffd166;   /* Warngelb / Sicherheitsgelb */
+  --steel:#8a929c; --steel2:#b4bcc6; --steeldark:#3a4048; /* Stahl / Metall */
+  --orange:#e8641c; --orange2:#ff7a33;                    /* Sicherheits-Orange */
+  --hazard:#ffcf33;                                        /* Warnstreifen-Gelb */
+  /* Alte Namen auf Werkstatt gemappt, damit alles automatisch mitzieht */
+  --gold:#f5a623; --gold2:#ffb733; --gold3:#ffd166;
+  --deep:#14161a; --panel:#1c2026; --card:#22272e; --card2:#2a3038;
+  --red:#c0392b; --red2:#e74c3c; --green:#5a8f3c; --green2:#7cb342;
+  --border:#3a424c; --neon:#e8641c;
+  --glow-amber:0 0 10px rgba(245,166,35,0.55);
+  --steel-grad:linear-gradient(160deg,#2f353d,#22272e 45%,#1a1e23);
 }
-body{background:var(--deep);font-family:'Montserrat',sans-serif;color:#fff;}
+body{background:var(--deep);font-family:'Rajdhani','Montserrat',sans-serif;color:#e8e6e0;position:relative;overflow-x:hidden;}
+
+/* ═══ GLOBALE WERKSTATT-LAYER ═══ */
+/* Geriffeltes Stahlblech (Diamond-Plate) als Grundtextur */
+body::before{
+  content:'';position:fixed;inset:0;z-index:0;pointer-events:none;opacity:0.5;
+  background-color:#16191d;
+  background-image:
+    repeating-linear-gradient(45deg,rgba(255,255,255,0.025) 0 2px,transparent 2px 14px),
+    repeating-linear-gradient(-45deg,rgba(255,255,255,0.025) 0 2px,transparent 2px 14px),
+    repeating-linear-gradient(0deg,rgba(0,0,0,0.15) 0 1px,transparent 1px 40px),
+    repeating-linear-gradient(90deg,rgba(0,0,0,0.15) 0 1px,transparent 1px 40px);
+  background-size:28px 28px,28px 28px,40px 40px,40px 40px;
+  mask-image:radial-gradient(ellipse 90% 80% at 50% 40%,#000 55%,transparent 100%);
+}
+/* Warme Werkstattlampen-Beleuchtung */
+body::after{
+  content:'';position:fixed;inset:-20%;z-index:0;pointer-events:none;opacity:0.5;
+  background:
+    radial-gradient(circle at 18% 12%,rgba(245,166,35,0.22),transparent 40%),
+    radial-gradient(circle at 82% 18%,rgba(232,100,28,0.16),transparent 42%),
+    radial-gradient(circle at 70% 88%,rgba(245,166,35,0.14),transparent 45%);
+  filter:blur(30px);
+  animation:lampFlicker 7s ease-in-out infinite;
+}
+@keyframes lampFlicker{0%,100%{opacity:0.5;}47%{opacity:0.5;}48%{opacity:0.34;}49%{opacity:0.52;}50%{opacity:0.4;}51%{opacity:0.5;}}
+/* Warnstreifen-Band oben am Bildschirm */
+#cyberScan{position:fixed;top:0;left:0;right:0;height:0;z-index:1;pointer-events:none;}
+/* Schwebende Werkstatt-Partikel: Funken & Staub */
+#cyberParticles{position:fixed;inset:0;z-index:1;pointer-events:none;overflow:hidden;}
+.cyp{position:absolute;bottom:-20px;width:3px;height:3px;border-radius:50%;opacity:0.6;animation:cypRise linear infinite;}
+@keyframes cypRise{0%{transform:translateY(0) translateX(0);opacity:0;}10%{opacity:0.7;}90%{opacity:0.5;}100%{transform:translateY(-105vh) translateX(var(--drift,20px));opacity:0;}}
+/* App über den Layern */
+.app,.auth-wrap,.casino-app{position:relative;z-index:2;}
+
+::selection{background:rgba(245,166,35,0.4);color:#14161a;}
+::-webkit-scrollbar{width:12px;height:12px;}
+::-webkit-scrollbar-track{background:#16191d;border-left:1px solid var(--border);}
+::-webkit-scrollbar-thumb{background:linear-gradient(180deg,#4a525c,#2f353d);border-radius:2px;border:1px solid #1a1e23;}
+::-webkit-scrollbar-thumb:hover{background:linear-gradient(180deg,var(--amber),var(--orange));}
+
+
 .app{min-height:100vh;}
 
 /* ── AUTH ── */
@@ -688,6 +737,10 @@ body.admin-mode #adminBadge{display:block!important;}
 .ph-win.neg{color:var(--red2);}
 .ph-date{font-size:10px;color:rgba(255,255,255,0.2);letter-spacing:0.5px;}
 </style>
+
+<!-- ═══ CYBERPUNK BACKGROUND LAYERS ═══ -->
+<div id="cyberScan"></div>
+<div id="cyberParticles"></div>
 
 <div class="app" id="app">
 
@@ -1419,15 +1472,15 @@ body.admin-mode #adminBadge{display:block!important;}
 .slot-cell.win-cell{border-color:var(--gold2);background:rgba(212,168,67,0.12);animation:cellGlow 0.6s ease 3;}
 @keyframes cellGlow{0%,100%{box-shadow:none;}50%{box-shadow:0 0 16px rgba(240,192,96,0.7);}}
 /* MEGA-OVERKILL WIN EFFECTS */
-.slot-cell.win-active{border-color:#fff!important;background:rgba(240,192,96,0.35)!important;animation:winPulse 0.5s ease infinite!important;z-index:3;}
-@keyframes winPulse{0%,100%{box-shadow:0 0 20px 4px rgba(240,192,96,0.9),inset 0 0 20px rgba(255,255,255,0.5);transform:scale(1);}50%{box-shadow:0 0 40px 10px rgba(255,220,120,1),inset 0 0 30px rgba(255,255,255,0.8);transform:scale(1.08);}}
+.slot-cell.win-active{border-color:var(--amber2)!important;background:rgba(245,166,35,0.2)!important;animation:winPulse 0.5s ease infinite!important;z-index:3;}
+@keyframes winPulse{0%,100%{box-shadow:0 0 20px 4px rgba(245,166,35,0.85),inset 0 0 20px rgba(232,100,28,0.4);transform:scale(1);}50%{box-shadow:0 0 44px 12px rgba(255,183,51,1),inset 0 0 30px rgba(245,166,35,0.7);transform:scale(1.09);}}
 .slot-cell.win-active .slot-sym{animation:symbolBounce 0.5s ease infinite;text-shadow:0 0 20px rgba(255,220,120,1);}
 @keyframes symbolBounce{0%,100%{transform:scale(1) rotate(0);}25%{transform:scale(1.25) rotate(-8deg);}75%{transform:scale(1.25) rotate(8deg);}}
 @keyframes screenShake{0%,100%{transform:translate(0,0) rotate(0);}10%{transform:translate(-6px,-4px) rotate(-0.5deg);}20%{transform:translate(7px,3px) rotate(0.5deg);}30%{transform:translate(-8px,5px) rotate(-0.4deg);}40%{transform:translate(6px,-6px) rotate(0.6deg);}50%{transform:translate(-5px,4px) rotate(-0.3deg);}60%{transform:translate(8px,3px) rotate(0.4deg);}70%{transform:translate(-6px,-5px) rotate(-0.5deg);}80%{transform:translate(5px,6px) rotate(0.3deg);}90%{transform:translate(-4px,-3px) rotate(-0.2deg);}}
 .screen-shake{animation:screenShake 0.5s ease;}
 .screen-shake-hard{animation:screenShake 0.7s ease 2;}
 /* Neon flash overlay */
-#fxFlash{position:fixed;inset:0;pointer-events:none;z-index:99990;opacity:0;background:radial-gradient(circle at 50% 45%,rgba(255,255,255,0.9),rgba(240,192,96,0.4) 40%,transparent 70%);}
+#fxFlash{position:fixed;inset:0;pointer-events:none;z-index:99990;opacity:0;background:radial-gradient(circle at 50% 45%,rgba(255,255,255,0.9),rgba(245,166,35,0.45) 30%,rgba(232,100,28,0.3) 55%,transparent 75%);}
 #fxFlash.fire{animation:neonFlash 0.35s ease;}
 @keyframes neonFlash{0%{opacity:0;}30%{opacity:1;}100%{opacity:0;}}
 #fxFlash.rainbow{background:conic-gradient(from 0deg,#ff004d,#ff9a00,#ffe600,#00ff88,#00d4ff,#a855f7,#ff004d);}
@@ -1440,7 +1493,7 @@ body.admin-mode #adminBadge{display:block!important;}
 #fxBanner.out{animation:bannerOut 0.4s ease forwards;}
 @keyframes bannerPop{0%{transform:translate(-50%,-50%) scale(0) rotate(-15deg);opacity:0;}60%{transform:translate(-50%,-50%) scale(1.15) rotate(3deg);opacity:1;}100%{transform:translate(-50%,-50%) scale(1) rotate(0);opacity:1;}}
 @keyframes bannerOut{to{transform:translate(-50%,-50%) scale(1.4);opacity:0;}}
-.fx-banner-title{font-size:4rem;font-weight:900;letter-spacing:4px;text-transform:uppercase;background:linear-gradient(90deg,#ffe600,#ff9a00,#ff004d,#ffe600);background-size:300% 100%;-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;filter:drop-shadow(0 0 25px rgba(255,180,0,0.9));animation:hueShift 1s linear infinite;line-height:1;}
+.fx-banner-title{font-size:4rem;font-weight:900;letter-spacing:4px;text-transform:uppercase;font-family:'Oswald','Rajdhani',sans-serif;background:linear-gradient(90deg,#ffd166,#f5a623,#e8641c,#ffd166);background-size:300% 100%;-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;filter:drop-shadow(0 0 20px rgba(245,166,35,0.9)) drop-shadow(0 3px 4px rgba(0,0,0,0.6));animation:hueShift 1s linear infinite;line-height:1;}
 @keyframes hueShift{to{background-position:300% 0;}}
 .fx-banner-sub{font-size:2.6rem;font-weight:800;color:#fff;text-shadow:0 0 30px rgba(255,220,120,1),0 0 60px rgba(255,150,0,0.8);letter-spacing:2px;margin-top:6px;}
 /* Win amount counter in message */
@@ -1453,6 +1506,128 @@ body.admin-mode #adminBadge{display:block!important;}
 @keyframes raysSpin{0%{opacity:0;transform:translate(-50%,-50%) scale(0.2) rotate(0);}20%{opacity:0.8;}100%{opacity:0;transform:translate(-50%,-50%) scale(3) rotate(180deg);}}
 
 .slot-sym{transition:transform 0.08s;display:block;line-height:1;}
+
+/* ═══════════════════════════════════════════════
+   🔧 WERKSTATT UI OVERRIDES – Industrie / Metall
+   ═══════════════════════════════════════════════ */
+h1,h2,h3,.nav-logo,.section-title,.jp-tier,.balance-val,.win-msg{font-family:'Oswald','Rajdhani',sans-serif!important;}
+
+/* Warnstreifen-Helper (schräge Gefahren-Streifen) */
+.hazard-tape{background:repeating-linear-gradient(45deg,#f5a623 0 18px,#14161a 18px 36px);}
+
+.casino-app{background:transparent!important;}
+
+/* Top-Nav – Metallschiene mit Warnstreifen-Kante */
+.top-nav{background:var(--steel-grad)!important;backdrop-filter:blur(2px);border-bottom:1px solid #12151a!important;box-shadow:0 3px 0 #0d0f12,0 6px 20px rgba(0,0,0,0.6),inset 0 1px 0 rgba(255,255,255,0.06);}
+.top-nav::after{background:repeating-linear-gradient(45deg,var(--amber) 0 16px,#14161a 16px 32px)!important;height:4px!important;opacity:0.95;box-shadow:0 1px 4px rgba(0,0,0,0.6);}
+.nav-logo{color:var(--steel2)!important;text-shadow:0 1px 2px rgba(0,0,0,0.8);}
+.nav-logo .r{color:var(--orange)!important;}
+.nav-logo .g{color:var(--amber)!important;text-shadow:0 0 8px rgba(245,166,35,0.5);}
+.nav-link{color:rgba(200,204,210,0.5)!important;}
+.nav-link:hover{color:var(--amber2)!important;}
+.nav-link.active{border-bottom-color:var(--amber)!important;color:#fff!important;text-shadow:0 0 8px rgba(245,166,35,0.6);}
+
+/* Guthaben – LCD/Digital-Anzeige im Metallrahmen */
+.balance-chip{background:#0d1013!important;border:2px solid #3a424c!important;border-radius:4px!important;box-shadow:inset 0 0 14px rgba(0,0,0,0.8),0 1px 0 rgba(255,255,255,0.05);}
+.balance-val{color:var(--amber2)!important;font-family:'Oswald',monospace!important;text-shadow:0 0 10px rgba(245,166,35,0.7);letter-spacing:2px;}
+.balance-label{color:rgba(180,188,198,0.5)!important;}
+#adminBadge{background:repeating-linear-gradient(45deg,var(--amber) 0 12px,#14161a 12px 24px)!important;color:#14161a!important;border:1px solid #0d0f12;box-shadow:0 2px 6px rgba(0,0,0,0.5)!important;}
+
+/* Primär-Buttons – gebürstetes Metall mit Warngelb */
+.btn-primary,.spin-btn{
+  background:linear-gradient(180deg,var(--amber2),var(--amber) 45%,var(--orange))!important;
+  color:#1a1206!important;font-family:'Oswald',sans-serif!important;font-weight:700!important;letter-spacing:2px!important;
+  border-radius:5px!important;border:1px solid #7a4a10!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,0.5),inset 0 -2px 4px rgba(0,0,0,0.3),0 3px 0 #7a3d0e,0 5px 12px rgba(0,0,0,0.5)!important;
+  text-shadow:0 1px 0 rgba(255,255,255,0.3);animation:none!important;
+}
+.btn-primary:hover,.spin-btn:hover{filter:brightness(1.08);transform:translateY(-1px);box-shadow:inset 0 1px 0 rgba(255,255,255,0.6),0 4px 0 #7a3d0e,0 7px 16px rgba(0,0,0,0.55)!important;}
+.btn-primary:active,.spin-btn:active{transform:translateY(2px);box-shadow:inset 0 1px 0 rgba(255,255,255,0.4),0 1px 0 #7a3d0e!important;}
+.spin-btn:disabled{filter:grayscale(0.7) brightness(0.7);}
+/* Schraubenköpfe in den Ecken des SPIN-Buttons */
+.spin-btn{position:relative;overflow:visible;}
+.spin-btn::before,.spin-btn::after{content:'';position:absolute;top:5px;width:7px;height:7px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#6b6b6b,#2a2a2a);box-shadow:inset 0 0 2px rgba(0,0,0,0.8);}
+.spin-btn::before{left:7px;}
+.spin-btn::after{right:7px;}
+
+/* AUTO / Sound-Buttons – Metallknopf */
+.auto-btn{border:1px solid #4a525c!important;border-radius:5px!important;color:var(--steel2)!important;background:linear-gradient(180deg,#353b43,#22272e)!important;font-family:'Oswald',sans-serif!important;font-weight:600!important;letter-spacing:1px!important;box-shadow:inset 0 1px 0 rgba(255,255,255,0.08),0 2px 4px rgba(0,0,0,0.4);transition:all 0.15s;}
+.auto-btn:hover{border-color:var(--amber)!important;color:var(--amber2)!important;}
+.auto-btn.on{border-color:var(--amber)!important;color:var(--amber2)!important;background:linear-gradient(180deg,#4a3a1a,#2e2410)!important;box-shadow:inset 0 0 10px rgba(245,166,35,0.3);}
+
+/* Deposit / Kredit-Button */
+.deposit-btn{border-radius:5px!important;}
+
+/* Bet-Chips – Muttern/Unterlegscheiben */
+.bet-chip{border:2px solid #4a525c!important;border-radius:6px!important;background:linear-gradient(180deg,#2e343c,#1c2026)!important;font-family:'Oswald',sans-serif!important;font-weight:600!important;color:var(--steel2)!important;box-shadow:inset 0 1px 0 rgba(255,255,255,0.06);transition:all 0.15s;}
+.bet-chip:hover{border-color:var(--amber)!important;color:#fff!important;}
+.bet-chip.active{background:linear-gradient(180deg,var(--amber2),var(--orange))!important;border-color:#7a4a10!important;color:#1a1206!important;box-shadow:inset 0 1px 0 rgba(255,255,255,0.4),0 0 10px rgba(245,166,35,0.4)!important;}
+
+/* Spiel-Karten – Metallplatten mit Schraubenecken */
+.g-card{background:var(--steel-grad)!important;border:1px solid #12151a!important;border-radius:8px!important;transition:transform 0.2s,box-shadow 0.2s;position:relative;overflow:hidden;box-shadow:inset 0 1px 0 rgba(255,255,255,0.06),0 4px 10px rgba(0,0,0,0.5);}
+/* Vier Schraubenköpfe in den Ecken */
+.g-card::before{content:'';position:absolute;inset:0;border-radius:8px;pointer-events:none;z-index:2;
+  background-image:
+    radial-gradient(circle at 10px 10px,#5a5a5a 0 3px,transparent 3.5px),
+    radial-gradient(circle at calc(100% - 10px) 10px,#5a5a5a 0 3px,transparent 3.5px),
+    radial-gradient(circle at 10px calc(100% - 10px),#5a5a5a 0 3px,transparent 3.5px),
+    radial-gradient(circle at calc(100% - 10px) calc(100% - 10px),#5a5a5a 0 3px,transparent 3.5px);
+  opacity:0.7;}
+.g-card:hover:not(.locked){transform:translateY(-4px);box-shadow:inset 0 1px 0 rgba(255,255,255,0.1),0 10px 26px rgba(0,0,0,0.6),0 0 20px rgba(245,166,35,0.25)!important;border-color:var(--amber)!important;}
+.g-thumb-inner{filter:drop-shadow(0 2px 4px rgba(0,0,0,0.6));}
+
+/* Jackpot-Karten – Anzeigetafeln */
+.jp-card{background:#0d1013!important;border:2px solid #3a424c!important;border-radius:6px!important;box-shadow:inset 0 0 20px rgba(0,0,0,0.7),0 3px 8px rgba(0,0,0,0.5);}
+.jp-card.mega::before{background:repeating-linear-gradient(45deg,var(--amber) 0 10px,#14161a 10px 20px)!important;}
+.jp-card.major::before{background:var(--amber)!important;box-shadow:0 0 10px rgba(245,166,35,0.5);}
+.jp-card .jp-amt,.jp-amount{font-family:'Oswald',monospace!important;text-shadow:0 0 12px rgba(245,166,35,0.6);}
+
+/* VIP-Karten */
+.vip-tier-card{background:var(--steel-grad)!important;border:1px solid #12151a!important;border-radius:8px!important;box-shadow:inset 0 1px 0 rgba(255,255,255,0.05),0 3px 8px rgba(0,0,0,0.5);}
+.vip-tier-card.current{box-shadow:0 0 24px rgba(245,166,35,0.35)!important;border-color:var(--amber)!important;}
+
+/* Slot-Modal + Reel-Feld – Maschinen-Panel */
+.s-modal{background:rgba(10,12,14,0.92)!important;backdrop-filter:blur(3px);}
+#reelGrid{border:3px solid #3a424c!important;border-radius:8px!important;background:#0a0c0e!important;box-shadow:inset 0 0 40px rgba(0,0,0,0.85),0 0 0 1px #12151a,0 6px 20px rgba(0,0,0,0.6)!important;position:relative;}
+/* Warnstreifen-Rahmen ums Feld */
+#reelGrid::before{content:'';position:absolute;inset:-6px;border-radius:10px;padding:3px;background:repeating-linear-gradient(45deg,var(--amber) 0 12px,#14161a 12px 24px);-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude;opacity:0.75;pointer-events:none;z-index:6;}
+.slot-cell{background:linear-gradient(160deg,#22272e,#14171b)!important;border:1px solid #3a424c!important;border-radius:5px!important;box-shadow:inset 0 1px 3px rgba(0,0,0,0.6),inset 0 -1px 0 rgba(255,255,255,0.04)!important;}
+.slot-sym{filter:drop-shadow(0 2px 3px rgba(0,0,0,0.7));}
+
+/* Win-Message */
+.win-msg.win-big,.win-msg.counting{color:var(--amber2)!important;text-shadow:0 0 18px rgba(245,166,35,0.8),0 2px 4px rgba(0,0,0,0.6)!important;}
+
+/* Modals allgemein */
+.ls-modal,.grid-up-box{background:var(--steel-grad)!important;border:2px solid #3a424c!important;}
+
+/* Sidebar / Kategorie-Buttons */
+.cat-btn.active,.sb-item.active{color:var(--amber2)!important;}
+.section-title{color:#e8e6e0!important;text-shadow:0 2px 4px rgba(0,0,0,0.6);border-left:4px solid var(--amber);padding-left:10px;}
+
+/* Ticker */
+.tick-name{color:var(--amber2)!important;}
+
+/* Inputs – Metallfeld */
+.field-input{background:#0d1013!important;border:1px solid #3a424c!important;}
+.field-input:focus{border-color:var(--amber)!important;box-shadow:inset 0 1px 3px rgba(0,0,0,0.6),0 0 0 2px rgba(245,166,35,0.2)!important;}
+
+/* Auth – Werkstatt-Türschild */
+.auth-logo-main{color:var(--steel2)!important;font-family:'Oswald',sans-serif!important;text-shadow:0 2px 4px rgba(0,0,0,0.8);letter-spacing:2px;}
+.auth-logo-main .red{color:var(--orange)!important;}
+.auth-logo-main .gold{color:var(--amber)!important;text-shadow:0 0 10px rgba(245,166,35,0.5);}
+.auth-logo-stars{color:var(--amber)!important;letter-spacing:8px;}
+.auth-card{background:var(--steel-grad)!important;border:2px solid #3a424c!important;border-radius:8px!important;box-shadow:inset 0 1px 0 rgba(255,255,255,0.06),0 12px 40px rgba(0,0,0,0.7)!important;position:relative;}
+/* Schraubenköpfe an der Auth-Karte */
+.auth-card::after{content:'';position:absolute;inset:0;border-radius:8px;pointer-events:none;z-index:1;
+  background-image:
+    radial-gradient(circle at 14px 14px,#5a5a5a 0 4px,transparent 4.5px),
+    radial-gradient(circle at calc(100% - 14px) 14px,#5a5a5a 0 4px,transparent 4.5px),
+    radial-gradient(circle at 14px calc(100% - 14px),#5a5a5a 0 4px,transparent 4.5px),
+    radial-gradient(circle at calc(100% - 14px) calc(100% - 14px),#5a5a5a 0 4px,transparent 4.5px);
+  opacity:0.6;}
+.auth-card>*{position:relative;z-index:2;}
+
+
 </style>
 
 <!-- MEGA-OVERKILL FX LAYER -->
@@ -1586,6 +1761,26 @@ function fxCountUp(el,from,to,ms,onDone){
   requestAnimationFrame(frame);
 }
 function sleep(ms){ return new Promise(r=>setTimeout(r,ms)); }
+
+/* ═══ Werkstatt Hintergrund-Partikel: Funken & Staub ═══ */
+function initCyberParticles(){
+  const box=document.getElementById('cyberParticles'); if(!box)return;
+  const colors=['#f5a623','#ff7a33','#ffcf33','#b4bcc6'];
+  const N=46;
+  for(let i=0;i<N;i++){
+    const p=document.createElement('div'); p.className='cyp';
+    const c=colors[Math.floor(Math.random()*colors.length)];
+    const size=1+Math.random()*3.5;
+    p.style.left=(Math.random()*100)+'vw';
+    p.style.width=size+'px'; p.style.height=size+'px';
+    p.style.background=c; p.style.boxShadow=`0 0 ${6+size*2}px ${c}`;
+    p.style.setProperty('--drift',((Math.random()*2-1)*80)+'px');
+    p.style.animationDuration=(9+Math.random()*14)+'s';
+    p.style.animationDelay=(-Math.random()*20)+'s';
+    box.appendChild(p);
+  }
+}
+document.addEventListener('DOMContentLoaded',initCyberParticles);
 
 let cUser=null,bal=0,bet=1,spinning=false,autoOn=false,autoTmr=null;
 let isAdmin=false; // Admin-Testmodus: alles freigeschaltet + unendlich Geld
