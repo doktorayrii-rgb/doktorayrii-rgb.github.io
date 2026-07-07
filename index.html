@@ -152,6 +152,8 @@ body{background:var(--deep);font-family:'Montserrat',sans-serif;color:#fff;}
 .nav-link:hover{color:rgba(255,255,255,0.8);}
 .nav-link.active{color:#fff;border-bottom-color:var(--gold2);}
 .nav-right{display:flex;align-items:center;gap:10px;margin-left:auto;}
+body.admin-mode #depositBtn{display:none!important;}
+body.admin-mode #adminBadge{display:block!important;}
 .balance-chip{
   background:rgba(0,0,0,0.4);border:1px solid rgba(212,168,67,0.4);
   border-radius:3px;padding:6px 14px;display:flex;align-items:center;gap:8px;
@@ -439,6 +441,28 @@ body{background:var(--deep);font-family:'Montserrat',sans-serif;color:#fff;}
 .vlt-text{font-size:12px;color:rgba(255,255,255,0.5);line-height:1.5;margin-bottom:14px;letter-spacing:0.3px;}
 .vlt-close{background:linear-gradient(135deg,#5b21b6,#7c3aed);border:none;color:#fff;font-family:'Oswald',sans-serif;font-size:13px;font-weight:700;letter-spacing:2px;padding:9px 28px;border-radius:2px;cursor:pointer;text-transform:uppercase;}
 
+/* FELD-ERWEITERUNG (VIP-Aufstieg) */
+.grid-up-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.9);z-index:100000;display:flex;align-items:center;justify-content:center;padding:1rem;animation:fadeIn 0.25s ease;}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.grid-up-box{position:relative;background:linear-gradient(160deg,var(--card2),var(--card));border:1px solid rgba(31,181,173,0.4);border-radius:14px;padding:2rem 2rem 1.6rem;max-width:520px;width:100%;text-align:center;box-shadow:0 0 70px rgba(31,181,173,0.25);animation:popIn 0.3s cubic-bezier(0.34,1.56,0.64,1);overflow:hidden;}
+.grid-up-box::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,#1fb5ad,var(--gold2),#1fb5ad);}
+.gu-crown{font-size:2.6rem;margin-bottom:6px;}
+.gu-title{font-family:'Oswald','Space Grotesk',sans-serif;font-size:1.4rem;font-weight:800;letter-spacing:1.5px;color:var(--gold2);text-transform:uppercase;}
+.gu-sub{font-size:12.5px;color:rgba(255,255,255,0.55);line-height:1.55;margin:8px 0 18px;letter-spacing:0.3px;}
+.gu-sub strong{color:#1fb5ad;}
+.gu-options{display:flex;gap:14px;flex-wrap:wrap;justify-content:center;}
+.gu-opt{flex:1;min-width:190px;background:rgba(0,0,0,0.35);border:2px solid rgba(255,255,255,0.08);border-radius:12px;padding:16px 14px;cursor:pointer;transition:all 0.18s ease;text-align:left;}
+.gu-opt:hover{border-color:#1fb5ad;background:rgba(31,181,173,0.08);transform:translateY(-2px);}
+.gu-opt-head{display:flex;align-items:center;gap:8px;font-family:'Oswald',sans-serif;font-weight:700;font-size:14px;letter-spacing:1px;color:#fff;text-transform:uppercase;margin-bottom:8px;}
+.gu-opt-head .gu-dir{font-size:1.3rem;}
+.gu-preview{display:grid;gap:3px;margin:10px 0;justify-content:start;}
+.gu-preview .gu-cell{width:15px;height:15px;border-radius:3px;background:rgba(255,255,255,0.12);}
+.gu-preview .gu-cell.new{background:#1fb5ad;box-shadow:0 0 8px rgba(31,181,173,0.6);}
+.gu-opt-desc{font-size:11px;color:rgba(255,255,255,0.5);line-height:1.5;}
+.gu-opt-desc b{color:var(--gold2);}
+.gu-cur{font-size:11px;color:rgba(255,255,255,0.4);margin-top:14px;letter-spacing:0.5px;}
+.gu-opt.disabled{opacity:0.35;pointer-events:none;}
+
 /* SLOT MODAL */
 .s-modal{
   display:none;position:fixed;inset:0;background:rgba(0,0,0,0.92);
@@ -708,6 +732,8 @@ body{background:var(--deep);font-family:'Montserrat',sans-serif;color:#fff;}
           </div>
         </div>
         <button class="btn-primary" onclick="doLogin()">Einloggen</button>
+        <button type="button" onclick="adminQuickLogin()" style="width:100%;margin-top:8px;padding:10px;background:linear-gradient(135deg,#1fb5ad,#0f8a83);color:#fff;border:none;border-radius:8px;font-weight:700;cursor:pointer;font-family:inherit;letter-spacing:0.5px;">🛠️ Admin-Testmodus (unendlich Geld, alles frei)</button>
+        <div class="hint-text" style="text-align:center;margin-top:6px;font-size:11px;color:rgba(255,255,255,0.35);">Admin-Login: <strong style="color:#1fb5ad;">admin</strong> / <strong style="color:#1fb5ad;">admin</strong></div>
         <div class="age-note">⚠ Nur für echte Techniker · Spiele verantwortungsvoll ⚠</div>
       </div>
 
@@ -747,6 +773,7 @@ body{background:var(--deep);font-family:'Montserrat',sans-serif;color:#fff;}
       <button class="nav-link" onclick="setNav(this);showPage('vip')">VIP Club</button>
     </div>
     <div class="nav-right">
+      <div class="admin-badge" id="adminBadge" style="display:none;background:linear-gradient(135deg,#1fb5ad,#0f8a83);color:#fff;padding:5px 12px;border-radius:8px;font-weight:800;font-size:0.72rem;letter-spacing:1px;">🛠️ ADMIN</div>
       <div class="balance-chip">
         <div><div class="balance-label">Guthaben</div><div class="balance-val" id="balVal">⚡ 1.000</div></div>
       </div>
@@ -809,8 +836,8 @@ body{background:var(--deep);font-family:'Montserrat',sans-serif;color:#fff;}
     <!-- SIDEBAR -->
     <div class="sidebar">
       <div class="sb-section">Kategorien</div>
-      <button class="sb-item" onclick="sbNav(this,'metall')"><span class="sb-icon">​🔩​</span>Metall</button>
-      <button class="sb-item" onclick="sbNav(this,'elektro')"><span class="sb-icon">🔌​</span>Elektro</button>
+      <button class="sb-item" onclick="sbNav(this,'metall')"><span class="sb-icon">🔩</span>Metall</button>
+      <button class="sb-item" onclick="sbNav(this,'elektro')"><span class="sb-icon">🔌</span>Elektro</button>
       <button class="sb-item" onclick="sbNav(this,'tischspiele')"><span class="sb-icon">🃏</span>Tischspiele</button>
       <button class="sb-item" onclick="sbNav(this,'sonstiges')"><span class="sb-icon">🚫</span>Sonstiges</button>
 
@@ -941,7 +968,7 @@ body{background:var(--deep);font-family:'Montserrat',sans-serif;color:#fff;}
           <div class="vip-perk"><div class="vip-perk-icon">⚡</div><div><div class="vip-perk-title">Schnellere Auszahlungen</div><div class="vip-perk-desc">Priorität bei Auszahlungen – Gold+ innerhalb 2h.</div></div></div>
           
           <div class="vip-perk"><div class="vip-perk-icon">🏆</div><div><div class="vip-perk-title">VIP-Turniere</div><div class="vip-perk-desc">Zugang zu exklusiven Turnieren mit riesigen Preispools.</div></div></div>
-          <div class="vip-perk"><div class="vip-perk-icon">👨‍💼</div><div><div class="vip-perk-title">Persönlicher Manager</div><div class="vip-perk-desc">Ab Platinum: dein eigener Account-Manager, 24/7.</div></div></div>
+          <div class="vip-perk"><div class="vip-perk-icon">👨💼</div><div><div class="vip-perk-title">Persönlicher Manager</div><div class="vip-perk-desc">Ab Platinum: dein eigener Account-Manager, 24/7.</div></div></div>
         </div>
       </div>
 
@@ -1153,6 +1180,7 @@ body{background:var(--deep);font-family:'Montserrat',sans-serif;color:#fff;}
       <div class="spin-row">
         <button class="spin-btn" id="spinBtn" onclick="doSpin()">SPIN</button>
         <button class="auto-btn" id="autoBtn" onclick="toggleAuto()">AUTO</button>
+        <button class="auto-btn" id="soundBtn" onclick="toggleSound()" title="Sound an/aus" style="max-width:52px;">🔊</button>
       </div>
       <button class="pt-toggle" onclick="togglePT()" style="width:100%;margin-top:6px;">Gewinnplan ▾</button>
       <div class="paytab" id="payTab">
@@ -1390,14 +1418,187 @@ body{background:var(--deep);font-family:'Montserrat',sans-serif;color:#fff;}
 }
 .slot-cell.win-cell{border-color:var(--gold2);background:rgba(212,168,67,0.12);animation:cellGlow 0.6s ease 3;}
 @keyframes cellGlow{0%,100%{box-shadow:none;}50%{box-shadow:0 0 16px rgba(240,192,96,0.7);}}
+/* MEGA-OVERKILL WIN EFFECTS */
+.slot-cell.win-active{border-color:#fff!important;background:rgba(240,192,96,0.35)!important;animation:winPulse 0.5s ease infinite!important;z-index:3;}
+@keyframes winPulse{0%,100%{box-shadow:0 0 20px 4px rgba(240,192,96,0.9),inset 0 0 20px rgba(255,255,255,0.5);transform:scale(1);}50%{box-shadow:0 0 40px 10px rgba(255,220,120,1),inset 0 0 30px rgba(255,255,255,0.8);transform:scale(1.08);}}
+.slot-cell.win-active .slot-sym{animation:symbolBounce 0.5s ease infinite;text-shadow:0 0 20px rgba(255,220,120,1);}
+@keyframes symbolBounce{0%,100%{transform:scale(1) rotate(0);}25%{transform:scale(1.25) rotate(-8deg);}75%{transform:scale(1.25) rotate(8deg);}}
+@keyframes screenShake{0%,100%{transform:translate(0,0) rotate(0);}10%{transform:translate(-6px,-4px) rotate(-0.5deg);}20%{transform:translate(7px,3px) rotate(0.5deg);}30%{transform:translate(-8px,5px) rotate(-0.4deg);}40%{transform:translate(6px,-6px) rotate(0.6deg);}50%{transform:translate(-5px,4px) rotate(-0.3deg);}60%{transform:translate(8px,3px) rotate(0.4deg);}70%{transform:translate(-6px,-5px) rotate(-0.5deg);}80%{transform:translate(5px,6px) rotate(0.3deg);}90%{transform:translate(-4px,-3px) rotate(-0.2deg);}}
+.screen-shake{animation:screenShake 0.5s ease;}
+.screen-shake-hard{animation:screenShake 0.7s ease 2;}
+/* Neon flash overlay */
+#fxFlash{position:fixed;inset:0;pointer-events:none;z-index:99990;opacity:0;background:radial-gradient(circle at 50% 45%,rgba(255,255,255,0.9),rgba(240,192,96,0.4) 40%,transparent 70%);}
+#fxFlash.fire{animation:neonFlash 0.35s ease;}
+@keyframes neonFlash{0%{opacity:0;}30%{opacity:1;}100%{opacity:0;}}
+#fxFlash.rainbow{background:conic-gradient(from 0deg,#ff004d,#ff9a00,#ffe600,#00ff88,#00d4ff,#a855f7,#ff004d);}
+/* Slow-mo dark veil for big wins */
+#fxVeil{position:fixed;inset:0;pointer-events:none;z-index:99980;background:rgba(0,0,0,0);transition:background 0.4s ease;}
+#fxVeil.on{background:rgba(0,0,0,0.55);}
+/* Big win banner */
+#fxBanner{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%) scale(0);z-index:99995;pointer-events:none;text-align:center;font-family:'Oswald','Space Grotesk',sans-serif;}
+#fxBanner.show{animation:bannerPop 0.6s cubic-bezier(0.2,1.6,0.5,1) forwards;}
+#fxBanner.out{animation:bannerOut 0.4s ease forwards;}
+@keyframes bannerPop{0%{transform:translate(-50%,-50%) scale(0) rotate(-15deg);opacity:0;}60%{transform:translate(-50%,-50%) scale(1.15) rotate(3deg);opacity:1;}100%{transform:translate(-50%,-50%) scale(1) rotate(0);opacity:1;}}
+@keyframes bannerOut{to{transform:translate(-50%,-50%) scale(1.4);opacity:0;}}
+.fx-banner-title{font-size:4rem;font-weight:900;letter-spacing:4px;text-transform:uppercase;background:linear-gradient(90deg,#ffe600,#ff9a00,#ff004d,#ffe600);background-size:300% 100%;-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;filter:drop-shadow(0 0 25px rgba(255,180,0,0.9));animation:hueShift 1s linear infinite;line-height:1;}
+@keyframes hueShift{to{background-position:300% 0;}}
+.fx-banner-sub{font-size:2.6rem;font-weight:800;color:#fff;text-shadow:0 0 30px rgba(255,220,120,1),0 0 60px rgba(255,150,0,0.8);letter-spacing:2px;margin-top:6px;}
+/* Win amount counter in message */
+.win-msg.counting{color:var(--gold3);text-shadow:0 0 20px rgba(255,220,120,0.9);}
+/* Coin / confetti particles */
+.fx-particle{position:fixed;z-index:99992;pointer-events:none;font-size:1.6rem;will-change:transform,opacity;}
+/* Ray burst */
+#fxRays{position:fixed;top:50%;left:50%;width:10px;height:10px;transform:translate(-50%,-50%);z-index:99985;pointer-events:none;opacity:0;}
+#fxRays.on{animation:raysSpin 1.2s linear;}
+@keyframes raysSpin{0%{opacity:0;transform:translate(-50%,-50%) scale(0.2) rotate(0);}20%{opacity:0.8;}100%{opacity:0;transform:translate(-50%,-50%) scale(3) rotate(180deg);}}
+
 .slot-sym{transition:transform 0.08s;display:block;line-height:1;}
 </style>
 
+<!-- MEGA-OVERKILL FX LAYER -->
+<div id="fxFlash"></div>
+<div id="fxVeil"></div>
+<div id="fxRays"></div>
+<div id="fxBanner"></div>
+
 <script>
-const USERS=[{pw:'Demo1234',username:'RoyalDemo'},{pw:'Paul123',username:'Paul'},{pw:'test',username:'TestAdmin',isTestAccount:true}];
+const USERS=[{pw:'Demo1234',username:'RoyalDemo'},{pw:'Paul123',username:'Paul'},{pw:'admin',username:'admin',isAdmin:true}];
+
+/* ═══════════════════════════════════════════════
+   🔊 SOUND-ENGINE (Web Audio API – keine Dateien)
+   ═══════════════════════════════════════════════ */
+let _actx=null, soundOn=true;
+function actx(){
+  if(!_actx){ try{ _actx=new (window.AudioContext||window.webkitAudioContext)(); }catch(e){ _actx=null; } }
+  if(_actx && _actx.state==='suspended'){ _actx.resume().catch(()=>{}); }
+  return _actx;
+}
+// Grundton-Baustein
+function _tone(freq,dur,type,vol,when,slideTo){
+  const ac=actx(); if(!ac||!soundOn) return;
+  const t0=ac.currentTime+(when||0);
+  const osc=ac.createOscillator(), g=ac.createGain();
+  osc.type=type||'sine';
+  osc.frequency.setValueAtTime(freq,t0);
+  if(slideTo) osc.frequency.exponentialRampToValueAtTime(Math.max(1,slideTo),t0+dur);
+  g.gain.setValueAtTime(0.0001,t0);
+  g.gain.exponentialRampToValueAtTime(vol||0.2,t0+0.01);
+  g.gain.exponentialRampToValueAtTime(0.0001,t0+dur);
+  osc.connect(g); g.connect(ac.destination);
+  osc.start(t0); osc.stop(t0+dur+0.02);
+}
+// Rausch-Baustein (für Explosionen / Applaus)
+function _noise(dur,vol,when,filterFreq){
+  const ac=actx(); if(!ac||!soundOn) return;
+  const t0=ac.currentTime+(when||0);
+  const len=Math.floor(ac.sampleRate*dur);
+  const buf=ac.createBuffer(1,len,ac.sampleRate);
+  const d=buf.getChannelData(0);
+  for(let i=0;i<len;i++){ d[i]=(Math.random()*2-1)*Math.pow(1-i/len,2); }
+  const src=ac.createBufferSource(); src.buffer=buf;
+  const g=ac.createGain(); g.gain.value=vol||0.2;
+  let node=src;
+  if(filterFreq){ const f=ac.createBiquadFilter(); f.type='lowpass'; f.frequency.value=filterFreq; src.connect(f); node=f; }
+  node.connect(g); g.connect(ac.destination);
+  src.start(t0); src.stop(t0+dur);
+}
+const SFX={
+  spin(){ _tone(180,0.15,'sawtooth',0.08,0,420); },
+  reelStop(i){ _tone(200+i*30,0.06,'square',0.06); },
+  tick(i){ _tone(700+Math.min(i,20)*40,0.05,'triangle',0.09); }, // Zähl-Tick, steigt an
+  lineWin(i){ // pro Gewinnzeile ein aufsteigender "Ding"
+    const base=523.25*Math.pow(1.0595,Math.min(i*3,24));
+    _tone(base,0.14,'triangle',0.18);
+    _tone(base*1.5,0.16,'sine',0.12,0.02);
+  },
+  coin(){ _tone(880+Math.random()*300,0.08,'square',0.10,0,1600); },
+  bassDrop(){ _tone(140,0.7,'sine',0.32,0,32); _tone(70,0.9,'sine',0.28,0.05,28); _noise(0.5,0.15,0,300); },
+  fanfare(){ // Big-Win Fanfare
+    const seq=[523.25,659.25,783.99,1046.5,1318.5];
+    seq.forEach((f,i)=>{ _tone(f,0.28,'sawtooth',0.16,i*0.09,f*1.002); _tone(f*2,0.28,'triangle',0.08,i*0.09); });
+    _noise(0.6,0.12,0.1,4000); // Sizzle
+  },
+  megaHit(){ _tone(1200,0.5,'sawtooth',0.2,0,180); _noise(0.4,0.25,0,800); _tone(60,0.8,'sine',0.35,0,24); },
+  applause(){ for(let i=0;i<12;i++) _noise(0.25,0.05+Math.random()*0.05,i*0.04,5000); },
+  levelUp(){ [392,523,659,880].forEach((f,i)=>_tone(f,0.2,'triangle',0.16,i*0.08)); },
+  lose(){ _tone(300,0.2,'sine',0.08,0,180); },
+};
+
+/* ═══════════════════════════════════════════════
+   💥 VISUAL FX (Shake, Konfetti, Blitze, Slow-Mo)
+   ═══════════════════════════════════════════════ */
+function fxFlash(rainbow){
+  const el=document.getElementById('fxFlash'); if(!el)return;
+  el.classList.remove('fire'); el.classList.toggle('rainbow',!!rainbow);
+  void el.offsetWidth; el.classList.add('fire');
+}
+function fxShake(hard){
+  const app=document.getElementById('casinoApp')||document.body;
+  app.classList.remove('screen-shake','screen-shake-hard');
+  void app.offsetWidth;
+  app.classList.add(hard?'screen-shake-hard':'screen-shake');
+  setTimeout(()=>app.classList.remove('screen-shake','screen-shake-hard'), hard?1500:600);
+}
+function fxVeil(on){ const v=document.getElementById('fxVeil'); if(v)v.classList.toggle('on',!!on); }
+function fxRays(){ const r=document.getElementById('fxRays'); if(!r)return; r.classList.remove('on'); void r.offsetWidth; r.classList.add('on'); setTimeout(()=>r.classList.remove('on'),1200); }
+function fxParticles(count,emojis,spread){
+  for(let i=0;i<count;i++){
+    const p=document.createElement('div');
+    p.className='fx-particle';
+    p.textContent=emojis[Math.floor(Math.random()*emojis.length)];
+    const startX=50+(Math.random()*2-1)*(spread||20);
+    p.style.left=startX+'vw';
+    p.style.top='45vh';
+    p.style.fontSize=(1.1+Math.random()*1.8)+'rem';
+    document.body.appendChild(p);
+    const angle=(Math.random()*2-1)*1.2;
+    const dist=180+Math.random()*380;
+    const dx=Math.sin(angle)*dist;
+    const dy=-(220+Math.random()*260);
+    const rot=(Math.random()*2-1)*720;
+    const dur=1100+Math.random()*900;
+    p.animate([
+      {transform:'translate(0,0) rotate(0deg)',opacity:1},
+      {transform:`translate(${dx*0.5}px,${dy}px) rotate(${rot*0.5}deg)`,opacity:1,offset:0.5},
+      {transform:`translate(${dx}px,${dy+520}px) rotate(${rot}deg)`,opacity:0}
+    ],{duration:dur,easing:'cubic-bezier(0.25,0.6,0.4,1)'});
+    setTimeout(()=>p.remove(),dur);
+  }
+}
+function fxBanner(title,sub,ms){
+  const b=document.getElementById('fxBanner'); if(!b)return;
+  b.innerHTML=`<div class="fx-banner-title">${title}</div>${sub?`<div class="fx-banner-sub">${sub}</div>`:''}`;
+  b.classList.remove('out','show'); void b.offsetWidth; b.classList.add('show');
+  setTimeout(()=>{ b.classList.remove('show'); b.classList.add('out'); setTimeout(()=>{b.innerHTML='';b.classList.remove('out');}, 400); }, ms||1600);
+}
+// Zahl von->bis in einem Element hochzählen, mit Tick-Sounds
+function fxCountUp(el,from,to,ms,onDone){
+  const start=performance.now(); const diff=to-from; let lastTick=0;
+  function frame(now){
+    const t=Math.min(1,(now-start)/ms);
+    const eased=1-Math.pow(1-t,3);
+    const val=Math.round(from+diff*eased);
+    el.textContent='✓ Gewinn! +'+fmt(val).replace('⚡ ','⚡');
+    if(now-lastTick>55){ SFX.tick(Math.floor(t*20)); lastTick=now; }
+    if(t<1) requestAnimationFrame(frame);
+    else { if(onDone)onDone(); }
+  }
+  requestAnimationFrame(frame);
+}
+function sleep(ms){ return new Promise(r=>setTimeout(r,ms)); }
+
 let cUser=null,bal=0,bet=1,spinning=false,autoOn=false,autoTmr=null;
+let isAdmin=false; // Admin-Testmodus: alles freigeschaltet + unendlich Geld
+const ADMIN_BAL=1000000000; // 1 Mrd. als "unendlich"
 let vipPts=0,totalGames=0,totalWins=0,gameHistory=[];
 let avatarColor='#7c3aed,#a855f7';
+
+// Feld-Erweiterungen: bei jedem VIP-Aufstieg wählt der Spieler,
+// ob das Feld um eine Zeile (horizontal, nach unten) oder eine Spalte
+// (vertikal, nach rechts) wächst. Gilt für ALLE Spiele.
+let gridUpgrades={rows:0,cols:0};
+let vipLevelSeen=0; // höchstes bereits abgeholtes VIP-Level (für Aufstiegs-Erkennung)
+const MAX_ROWS=6, MAX_COLS=8; // Sicherheitsgrenzen
 
 // Loanshark state
 let loanDebt=0, loanDeadline=null, loanTimerInterval=null, loanCount=0;
@@ -1430,17 +1631,27 @@ const VIP_GRID = [
   {rows:3,cols:4},  // VIP 3
   {rows:3,cols:5},  // VIP 4
 ];
+// Alle Spiele starten bei 1×3 (unabhängig vom VIP-Level des Spiels).
+// Das Feld wächst nur über die vom Spieler bei VIP-Aufstiegen gewählten
+// Erweiterungen (gridUpgrades) – nicht automatisch durch höhere Spiele.
+const BASE_GRID = {rows:1, cols:3};
+function getGridSize(){
+  return {
+    rows: Math.min(MAX_ROWS, BASE_GRID.rows + (gridUpgrades.rows||0)),
+    cols: Math.min(MAX_COLS, BASE_GRID.cols + (gridUpgrades.cols||0)),
+  };
+}
 const GAMES=[
   {n:"Feilen",e:"🔨",rtp:"50.1%",cat:["metall"],bg:"gt-green",newG:false,prov:"Metall Grundkurs",vipReq:0,risk:"Niedrig",maxWin:"5×",minBet:10,maxBet:100},
-  {n:"Bohrmaschine",e:"🔧​",rtp:"96.5%",cat:["popular","metall"],bg:"gt-blue",hot:false,prov:"Silber VIP",vipReq:1,risk:"Mittel",maxWin:"50×",minBet:50,maxBet:500},
-  {n:"Fraesmaschine",e:"⚙️​",rtp:"97.2%",cat:["popular","metall"],bg:"gt-purple",hot:true,prov:"Gold VIP",vipReq:2,risk:"Hoch",maxWin:"200×",minBet:100,maxBet:1000},
-  {n:"Drehmaschine",e:"🔩​",rtp:"98.1%",cat:["popular","metall"],bg:"gt-red",hot:true,prov:"Platinum VIP",vipReq:3,risk:"Sehr Hoch",maxWin:"1.000×",minBet:2500,maxBet:25000},
+  {n:"Bohrmaschine",e:"🔧",rtp:"96.5%",cat:["popular","metall"],bg:"gt-blue",hot:false,prov:"Silber VIP",vipReq:1,risk:"Mittel",maxWin:"50×",minBet:50,maxBet:500},
+  {n:"Fraesmaschine",e:"⚙️",rtp:"97.2%",cat:["popular","metall"],bg:"gt-purple",hot:true,prov:"Gold VIP",vipReq:2,risk:"Hoch",maxWin:"200×",minBet:100,maxBet:1000},
+  {n:"Drehmaschine",e:"🔩",rtp:"98.1%",cat:["popular","metall"],bg:"gt-red",hot:true,prov:"Platinum VIP",vipReq:3,risk:"Sehr Hoch",maxWin:"1.000×",minBet:2500,maxBet:25000},
   {n:"Schon wieder Feilen",e:"🔨",rtp:"99.5%",cat:["metall"],bg:"gt-gold",newG:false,prov:"Diamond VIP",vipReq:4,risk:"Extrem",maxWin:"2.000×",minBet:5000,maxBet:50000},
   {n:"Loeten",e:"🖊️",rtp:"95.1%",cat:["elektro"],bg:"gt-green",newG:false,prov:"Elektro Grundkurs",vipReq:0,risk:"Niedrig",maxWin:"5×",minBet:10,maxBet:100},
   {n:"Gravieren",e:"🖋️",rtp:"96.5%",cat:["elektro"],bg:"gt-blue",hot:true,prov:"Silber VIP",vipReq:1,risk:"Mittel",maxWin:"50×",minBet:50,maxBet:500},
-  {n:"Schaltung",e:"💡​",rtp:"97.2%",cat:["popular","elektro"],bg:"gt-purple",hot:false,prov:"Gold VIP",vipReq:2,risk:"Hoch",maxWin:"200×",minBet:100,maxBet:1000},
-  {n:"Programmieren",e:"💻​",rtp:"98.1%",cat:["popular","elektro"],bg:"gt-red",hot:true,prov:"Platinum VIP",vipReq:3,risk:"Sehr Hoch",maxWin:"1.000×",minBet:2500,maxBet:25000},
-  {n:"Sidequests",e:"🚲​",rtp:"99.5%",cat:["popular","elektro"],bg:"gt-gold",hot:true,prov:"Diamond VIP",vipReq:4,risk:"Extrem",maxWin:"2.000×",minBet:5000,maxBet:50000},
+  {n:"Schaltung",e:"💡",rtp:"97.2%",cat:["popular","elektro"],bg:"gt-purple",hot:false,prov:"Gold VIP",vipReq:2,risk:"Hoch",maxWin:"200×",minBet:100,maxBet:1000},
+  {n:"Programmieren",e:"💻",rtp:"98.1%",cat:["popular","elektro"],bg:"gt-red",hot:true,prov:"Platinum VIP",vipReq:3,risk:"Sehr Hoch",maxWin:"1.000×",minBet:2500,maxBet:25000},
+  {n:"Sidequests",e:"🚲",rtp:"99.5%",cat:["popular","elektro"],bg:"gt-gold",hot:true,prov:"Diamond VIP",vipReq:4,risk:"Extrem",maxWin:"2.000×",minBet:5000,maxBet:50000},
   {n:"Alge",e:"🌿",rtp:"96.3%",cat:["sonstiges"],bg:"gt-teal",newG:true,prov:"FOS/BOS",vipReq:4,risk:"Niedrig",maxWin:"5×",minBet:1,maxBet:10},
   {n:"Blackjack",e:"🃏",rtp:"99.5%",cat:["tischspiele"],bg:"gt-green",hot:true,prov:"NetEnt",vipReq:4,risk:"Hoch",maxWin:"200×",minBet:10,maxBet:100},
   {n:"Roulette",e:"🎡",rtp:"97.3%",cat:["tischspiele"],bg:"gt-red",newG:false,prov:"NetEnt",vipReq:4,risk:"Mittel",maxWin:"35×",minBet:5,maxBet:50},
@@ -1451,88 +1662,88 @@ const GAMES=[
 // Each game has its own symbol set & paytable
 const GAME_CONFIGS = {
   slot: {
-    syms:  ["🔊","⛏️","🕞","🛠️","⚙️","🔩","🔧","📟​","💥​"],
+    syms:  ["🔊","⛏️","🕞","🛠️","⚙️","🔩","🔧","📟","💥"],
     names: ["A","K","Uru","Auge","Vase","Mond","Stern","Buch","Scatter"],
-    pay:   {"🔊":2,"⛏️":3,"🕞":5,"🛠️":8,"⚙️":6,"🔩":10,"🔧":4,"📟​":25,"💥​":50},
+    pay:   {"🔊":2,"⛏️":3,"🕞":5,"🛠️":8,"⚙️":6,"🔩":10,"🔧":4,"📟":25,"💥":50},
     weights:[8,7,7,5,5,4,4,3,2,1],
-    wild:"📟​", scatter:"💥​",
+    wild:"📟", scatter:"💥",
   },
     schaltung: {
-    syms:  ["🔌","💡","🔋","✏️","📏","📐","🔁","🖨️​","⚠️"],
+    syms:  ["🔌","💡","🔋","✏️","📏","📐","🔁","🖨️","⚠️"],
     names: ["A","K","Uru","Auge","Vase","Mond","Stern","Buch","Scatter"],
-    pay:   {"🔌":5,"💡":8,"🔋":15,"✏️":25,"📏":20,"📐":35,"🔁":12,"🖨️​":120,"⚠️":250},
+    pay:   {"🔌":5,"💡":8,"🔋":15,"✏️":25,"📏":20,"📐":35,"🔁":12,"🖨️":120,"⚠️":250},
     weights:[8,7,7,5,5,4,4,3,2,1],
-    wild:"📟​", scatter:"💥​",
+    wild:"📟", scatter:"💥",
   },
   frasmaschine: {
-    syms:  ["🔨","🛢️","🕞","🛠️","⚙️","🔩","🔧","👓​","💥​"],
+    syms:  ["🔨","🛢️","🕞","🛠️","⚙️","🔩","🔧","👓","💥"],
     names: ["A","K","Uru","Auge","Vase","Mond","Stern","Buch","Scatter"],
-    pay:   {"🔨":5,"🛢️":8,"🕞":15,"🛠️":25,"⚙️":20,"🔩":35,"🔧":12,"👓​":120,"💥​":250},
+    pay:   {"🔨":5,"🛢️":8,"🕞":15,"🛠️":25,"⚙️":20,"🔩":35,"🔧":12,"👓":120,"💥":250},
     weights:[8,7,7,5,5,4,4,3,2,1],
-    wild:"📟​", scatter:"💥​",
+    wild:"📟", scatter:"💥",
   },
     sidequests: {
-    syms:  ["🔩","🗡️","📯","🛡️","🎖️","📜","🔧","⛓️","🚲​"],
+    syms:  ["🔩","🗡️","📯","🛡️","🎖️","📜","🔧","⛓️","🚲"],
     names: ["A","K","Uru","Auge","Vase","Mond","Stern","Buch","Scatter"],
-    pay:   {"🔩":3,"🗡️":5,"📯":8,"🛡️":12,"🎖️":10,"📜":18,"🔧":6,"⛓️​":50,"🚲​":100},
+    pay:   {"🔩":3,"🗡️":5,"📯":8,"🛡️":12,"🎖️":10,"📜":18,"🔧":6,"⛓️":50,"🚲":100},
     weights:[8,7,7,5,5,4,4,3,2,1],
-    wild:"⛓️​", scatter:"🚲​",
+    wild:"⛓️", scatter:"🚲",
   },
   bohren: {
-    syms:  ["🔨","🛢️","🔊","🛠️","⚙️","🔩","🔧","👓​","💥​"],
+    syms:  ["🔨","🛢️","🔊","🛠️","⚙️","🔩","🔧","👓","💥"],
     names: ["A","K","Uru","Auge","Vase","Mond","Stern","Buch","Scatter"],
-    pay:   {"🔨":2,"🛢️":3,"🔊":5,"🛠️":8,"⚙️":6,"🔩":10,"🔧":4,"👓​":25,"💥​":50},
+    pay:   {"🔨":2,"🛢️":3,"🔊":5,"🛠️":8,"⚙️":6,"🔩":10,"🔧":4,"👓":25,"💥":50},
     weights:[8,7,7,5,5,4,4,3,2,1],
-    wild:"📟​", scatter:"💥​",
+    wild:"📟", scatter:"💥",
   },
     programmieren: {
-    syms:  ["💻","⌨️","📁","📤","📝","📡","💾","🖱️​","✅"],
+    syms:  ["💻","⌨️","📁","📤","📝","📡","💾","🖱️","✅"],
     names: ["A","K","Uru","Auge","Vase","Mond","Stern","Buch","Scatter"],
-    pay:   {"💻":10,"⌨️":18,"📁":40,"📤":80,"📝":60,"📡":120,"💾":200,"🖱️​":400,"✅​":1000},
+    pay:   {"💻":10,"⌨️":18,"📁":40,"📤":80,"📝":60,"📡":120,"💾":200,"🖱️":400,"✅":1000},
     weights:[8,7,7,5,5,4,4,3,2,1],
-    wild:"🖱️​", scatter:"✅​",
+    wild:"🖱️", scatter:"✅",
   },
     gravieren: {
-    syms:  ["🔌","💡","🕞","💥","⚙️","🔩","🔧","👓​","🖼️​"],
+    syms:  ["🔌","💡","🕞","💥","⚙️","🔩","🔧","👓","🖼️"],
     names: ["A","K","Uru","Auge","Vase","Mond","Stern","Buch","Scatter"],
-    pay:   {"🔌":3,"💡":5,"🕞":8,"💥":12,"⚙️":10,"🔩":18,"🔧":6,"👓​":50,"🖼️​":100},
+    pay:   {"🔌":3,"💡":5,"🕞":8,"💥":12,"⚙️":10,"🔩":18,"🔧":6,"👓":50,"🖼️":100},
     weights:[8,7,7,5,5,4,4,3,2,1],
-    wild:"📟​", scatter:"💥​",
+    wild:"📟", scatter:"💥",
   },
     feilen: {
-    syms:  ["🕧","🕦","🕒","🕐","🕑","🕘","🕚","🔔​","🔨"],
+    syms:  ["🕧","🕦","🕒","🕐","🕑","🕘","🕚","🔔","🔨"],
     names: ["A","K","Uru","Auge","Vase","Mond","Stern","Buch","Scatter"],
-    pay:   {"🕧":0,"🕦":0,"🕒":0,"🕐":0,"🕑":0,"🕘":0,"🕚":0,"🔔​":500,"🔨":10000},
+    pay:   {"🕧":0,"🕦":0,"🕒":0,"🕐":0,"🕑":0,"🕘":0,"🕚":0,"🔔":500,"🔨":10000},
     weights:[8,7,7,5,5,4,4,3,2,1],
-    wild:"📟​", scatter:"💥​",
+    wild:"📟", scatter:"💥",
   },
   schonwiederfeilen: {
-    syms:  ["🕧","🕦","🕒","🕐","🕑","🕘","🕚","🔔​","🔨"],
+    syms:  ["🕧","🕦","🕒","🕐","🕑","🕘","🕚","🔔","🔨"],
     names: ["A","K","Uru","Auge","Vase","Mond","Stern","Buch","Scatter"],
-    pay:   {"🕧":0,"🕦":0,"🕒":0,"🕐":0,"🕑":0,"🕘":0,"🕚":0,"🔔​":500,"🔨":10000},
+    pay:   {"🕧":0,"🕦":0,"🕒":0,"🕐":0,"🕑":0,"🕘":0,"🕚":0,"🔔":500,"🔨":10000},
     weights:[8,7,7,5,5,4,4,3,2,1],
-    wild:"📟​", scatter:"💥​",
+    wild:"📟", scatter:"💥",
   },
    loten: {
-    syms:  ["🖊️","🔌","♨️","💨","〰️","👓","🔴","🔔​","🖼️"],
+    syms:  ["🖊️","🔌","♨️","💨","〰️","👓","🔴","🔔","🖼️"],
     names: ["A","K","Uru","Auge","Vase","Mond","Stern","Buch","Scatter"],
-    pay:   {"🖊️":2,"🔌":3,"♨️":5,"💨":8,"〰️":6,"👓":10,"🔴":4,"🔔​":25,"🖼️":50},
+    pay:   {"🖊️":2,"🔌":3,"♨️":5,"💨":8,"〰️":6,"👓":10,"🔴":4,"🔔":25,"🖼️":50},
     weights:[8,7,7,5,5,4,4,3,2,1],
-    wild:"📟​", scatter:"💥​",
+    wild:"📟", scatter:"💥",
   },
     drehmaschine: {
-    syms:  ["🔨","🛢️","🕞","🛠️","⚙️","🔩","🔧","📟​","💥​"],
+    syms:  ["🔨","🛢️","🕞","🛠️","⚙️","🔩","🔧","📟","💥"],
     names: ["A","K","Uru","Auge","Vase","Mond","Stern","Buch","Scatter"],
-    pay:   {"🔨":10,"🛢️":18,"🕞":40,"🛠️":80,"⚙️":60,"🔩":120,"🔧":30,"📟​":400,"💥​":1000},
+    pay:   {"🔨":10,"🛢️":18,"🕞":40,"🛠️":80,"⚙️":60,"🔩":120,"🔧":30,"📟":400,"💥":1000},
     weights:[8,7,7,5,5,4,4,3,2,1],
-    wild:"📟​", scatter:"💥​",
+    wild:"📟", scatter:"💥",
   },
   bookofpharaoh: {
-    syms:  ["🅰","🅺","🅺","📜","🔨","⚙️","🔩","🔧","🛠️​","💥​"],
+    syms:  ["🅰","🅺","🅺","📜","🔨","⚙️","🔩","🔧","🛠️","💥"],
     names: ["A","K","K","Uru","Auge","Vase","Mond","Stern","Buch","Scatter"],
-    pay:   {"🅰":2,"🅺":3,"📜":5,"🔨":8,"⚙️":6,"🔩":10,"🔧":4,"🛠️​":25,"💥​":50},
+    pay:   {"🅰":2,"🅺":3,"📜":5,"🔨":8,"⚙️":6,"🔩":10,"🔧":4,"🛠️":25,"💥":50},
     weights:[8,7,7,5,5,4,4,3,2,1],
-    wild:"🛠️​", scatter:"💥​",
+    wild:"🛠️", scatter:"💥",
   },
   bookofrae: {
     syms:  ["🅰","🅺","🅺","🗡","🐍","🌸","🌑","📖","⚜","✨"],
@@ -1549,91 +1760,13 @@ const GAME_CONFIGS = {
 };
 
 // Dynamic paylines depending on rows x cols
-// Each payline = array of length `cols`, where value = row index for that column
-// Patterns: horizontal (flat), diagonal (/, \), zigzag (V, ^)
 function getPaylines(rows, cols) {
-  if (rows === 1) {
-    // Only one possible line
-    return [ Array(cols).fill(0) ]; // 1 line: ————
+  // Nur horizontale Reihen: eine Linie pro Zeile.
+  const lines = [];
+  for (let r = 0; r < rows; r++) {
+    lines.push(Array(cols).fill(r));
   }
-
-  if (rows === 2 && cols === 3) {
-    return [
-      // Horizontals
-      [0,0,0],   // Linie 1: ————  (oben)
-      [1,1,1],   // Linie 2: ————  (unten)
-      // Diagonals
-      [0,0,1],   // Linie 3: ↘  (oben-links → unten-rechts)
-      [1,1,0],   // Linie 4: ↗  (unten-links → oben-rechts)
-      // Zickzack
-      [0,1,0],   // Linie 5: ∨  (oben → unten → oben)
-      [1,0,1],   // Linie 6: ∧  (unten → oben → unten)
-    ]; // 6 lines
-  }
-
-  if (rows === 2 && cols === 4) {
-    return [
-      // Horizontals
-      [0,0,0,0],   // Linie 1: ————  (oben)
-      [1,1,1,1],   // Linie 2: ————  (unten)
-      // Diagonals
-      [0,0,0,1],   // Linie 3: ↘  sanft
-      [1,1,1,0],   // Linie 4: ↗  sanft
-      [0,0,1,1],   // Linie 5: ↘  steil
-      [1,1,0,0],   // Linie 6: ↗  steil
-      // Zickzack
-      [0,1,0,1],   // Linie 7: ∧∨  alternierend
-      [1,0,1,0],   // Linie 8: ∨∧  alternierend
-    ]; // 8 lines
-  }
-
-  if (rows === 3 && cols === 4) {
-    return [
-      // Horizontals (3 Linien)
-      [0,0,0,0],   // Linie 1: ————  (oben)
-      [1,1,1,1],   // Linie 2: ————  (mitte)
-      [2,2,2,2],   // Linie 3: ————  (unten)
-      // Diagonals (4 Linien)
-      [0,1,2,2],   // Linie 4: ↘  (oben → mitte → unten → unten)
-      [2,1,0,0],   // Linie 5: ↗  (unten → mitte → oben → oben)
-      [0,0,1,2],   // Linie 6: ↘  (oben → oben → mitte → unten)
-      [2,2,1,0],   // Linie 7: ↗  (unten → unten → mitte → oben)
-      // Zickzack V-Form (3 Linien)
-      [0,1,2,1],   // Linie 8:  ∨  (oben → mitte → unten → mitte)
-      [2,1,0,1],   // Linie 9:  ∧  (unten → mitte → oben → mitte)
-      [0,2,0,2],   // Linie 10: extremes Zickzack
-    ]; // 10 lines
-  }
-
-  // 3x5: 20 sinnvolle Linien
-  return [
-    // Horizontals (3 Linien)
-    [0,0,0,0,0],   // Linie 1:  ————  (oben)
-    [1,1,1,1,1],   // Linie 2:  ————  (mitte)
-    [2,2,2,2,2],   // Linie 3:  ————  (unten)
-    // Volle Diagonalen (2 Linien)
-    [0,1,2,2,2],   // Linie 4:  ↘  oben-links → unten-rechts
-    [2,1,0,0,0],   // Linie 5:  ↗  unten-links → oben-rechts
-    // Sanfte Diagonalen (4 Linien)
-    [0,0,1,2,2],   // Linie 6:  ↘ sanft (rechts)
-    [2,2,1,0,0],   // Linie 7:  ↗ sanft (rechts)
-    [0,0,0,1,2],   // Linie 8:  ↘ sehr sanft
-    [2,2,2,1,0],   // Linie 9:  ↗ sehr sanft
-    // V-Form Zickzack (4 Linien)
-    [0,1,2,1,0],   // Linie 10: ∨  großes V
-    [2,1,0,1,2],   // Linie 11: ∧  großes ∧
-    [1,2,2,2,1],   // Linie 12: ⌣  flaches U
-    [1,0,0,0,1],   // Linie 13: ⌢  flaches ∩
-    // Treppe (4 Linien)
-    [0,0,1,1,2],   // Linie 14: ↘ Treppe abwärts
-    [2,2,1,1,0],   // Linie 15: ↗ Treppe aufwärts
-    [0,1,1,2,2],   // Linie 16: ↘ Treppe abwärts (versetzt)
-    [2,1,1,0,0],   // Linie 17: ↗ Treppe aufwärts (versetzt)
-    // Wellenmuster (3 Linien)
-    [1,0,1,2,1],   // Linie 18: ~ Welle aufwärts
-    [1,2,1,0,1],   // Linie 19: ~ Welle abwärts
-    [0,2,1,2,0],   // Linie 20: ~ extremes Wellenmuster
-  ]; // 20 lines
+  return lines;
 }
 
 let slotGrid = []; // variable rows x cols
@@ -1676,7 +1809,7 @@ function pickSym(cfg){
 }
 
 function buildSlotGrid(cfg){
-  const grid_size = VIP_GRID[currentGame ? (currentGame.vipReq||0) : 0];
+  const grid_size = getGridSize();
   const rows = grid_size.rows, cols = grid_size.cols;
   slotGrid=[];
   for(let row=0;row<rows;row++){
@@ -1686,7 +1819,7 @@ function buildSlotGrid(cfg){
 }
 
 function renderSlotGrid(animate){
-  const grid_size = VIP_GRID[currentGame ? (currentGame.vipReq||0) : 0];
+  const grid_size = getGridSize();
   const rows = grid_size.rows, cols = grid_size.cols;
   const grid=document.getElementById('reelGrid');
   // update CSS grid columns to match current game size
@@ -1696,9 +1829,10 @@ function renderSlotGrid(animate){
   grid.innerHTML='';
   grid.appendChild(overlay);
   overlay.innerHTML='';
-  // build rows x cols (column-major for reel effect)
-  for(let col=0;col<cols;col++){
-    for(let row=0;row<rows;row++){
+  // Zellen ZEILENWEISE einfügen, passend zum CSS-Grid (grid-template-columns: cols).
+  // So entspricht die visuelle Zeile exakt der logischen Zeile in slotGrid.
+  for(let row=0;row<rows;row++){
+    for(let col=0;col<cols;col++){
       const cell=document.createElement('div');
       cell.className='slot-cell';
       cell.id=`sc_${row}_${col}`;
@@ -1714,12 +1848,18 @@ function renderSlotGrid(animate){
 function buildPT(){
   const g=document.getElementById('ptGrid');g.innerHTML='';
   const cfg=currentCfg;
-  const grid_size = VIP_GRID[currentGame ? (currentGame.vipReq||0) : 0];
-  const minMatch = grid_size.cols <= 3 ? 2 : 3;
+  const grid_size = getGridSize();
+  const minMatch = 2;
   const ptHead = document.querySelector('.pt-head');
-  if(ptHead) ptHead.textContent = `Gewinntabelle – mind. ${minMatch} gleiche auf Linie`;
+  if(ptHead) ptHead.textContent = `Gewinntabelle – mind. 2 gleiche in einer Reihe`;
   Object.entries(cfg.pay).sort((a,b)=>b[1]-a[1]).forEach(([s,m])=>{
-    g.innerHTML+=`<div class="pt-row"><span class="pt-s">${s}</span><span style="color:rgba(255,255,255,0.5);font-size:11px;">${minMatch}× </span><span class="pt-x">×${m}</span>${grid_size.cols>=4?`<span style="color:rgba(255,255,255,0.5);font-size:11px;"> 4× </span><span class="pt-x">×${m*3}</span>`:''}${grid_size.cols>=5?`<span style="color:rgba(255,255,255,0.5);font-size:11px;"> 5× </span><span class="pt-x">×${m*6}</span>`:''}</div>`;
+    // Multiplikatoren passend zur Reihenlänge (2×=×1, 3×=×2, 4×=×5, 5×=×10)
+    let cells = `<span class="pt-s">${s}</span>`;
+    cells += `<span style="color:rgba(255,255,255,0.5);font-size:11px;">2× </span><span class="pt-x">×${m}</span>`;
+    if(grid_size.cols>=3) cells += `<span style="color:rgba(255,255,255,0.5);font-size:11px;"> 3× </span><span class="pt-x">×${m*2}</span>`;
+    if(grid_size.cols>=4) cells += `<span style="color:rgba(255,255,255,0.5);font-size:11px;"> 4× </span><span class="pt-x">×${m*5}</span>`;
+    if(grid_size.cols>=5) cells += `<span style="color:rgba(255,255,255,0.5);font-size:11px;"> 5× </span><span class="pt-x">×${m*10}</span>`;
+    g.innerHTML+=`<div class="pt-row">${cells}</div>`;
   });
   if(cfg.wild) g.innerHTML+=`<div class="pt-row"><span class="pt-s">${cfg.wild}</span><span style="color:var(--gold);font-size:11px;">WILD – ersetzt alle</span></div>`;
   if(cfg.scatter) g.innerHTML+=`<div class="pt-row"><span class="pt-s">${cfg.scatter}</span><span style="color:var(--gold);font-size:11px;">BONUS – ${minMatch}+ = Multiplikator-Bonus</span></div>`;
@@ -1728,7 +1868,7 @@ function buildPT(){
 function slotSetBet(v,el){bet=v;document.querySelectorAll('.bet-chip').forEach(b=>b.classList.remove('active'));el.classList.add('active');document.getElementById('betDisp').textContent=fmt(v);}
 
 function animateReels(onDone){
-  const grid_size = VIP_GRID[currentGame ? (currentGame.vipReq||0) : 0];
+  const grid_size = getGridSize();
   const rows = grid_size.rows, cols = grid_size.cols;
   let done=0;
   for(let col=0;col<cols;col++){
@@ -1747,6 +1887,7 @@ function animateReels(onDone){
             const el=document.getElementById(`sc_${row}_${c}`);
             if(el) el.querySelector('.slot-sym').textContent=slotGrid[row][c];
           }
+          SFX.reelStop(c); // Klick beim Anhalten jeder Spalte
           done++;
           if(done===cols) onDone();
         }
@@ -1757,100 +1898,210 @@ function animateReels(onDone){
 
 function checkSlotWin(){
   const cfg=currentCfg;
-  const grid_size = VIP_GRID[currentGame ? (currentGame.vipReq||0) : 0];
+  const grid_size = getGridSize();
   const rows = grid_size.rows, cols = grid_size.cols;
-  const PAYLINES = getPaylines(rows, cols);
   let totalWinAmt=0;
   const winCells=new Set();
   let scatterCount=0;
 
-  // count scatters anywhere
-  if(cfg.scatter){
-    for(let r=0;r<rows;r++) for(let c=0;c<cols;c++) if(slotGrid[r][c]===cfg.scatter) scatterCount++;
+  // Symbole normalisieren (unsichtbare Varianten-/Zero-Width-Zeichen entfernen),
+  // damit optisch gleiche Symbole zuverlässig als gleich erkannt werden.
+  const norm = s => (s||'').replace(/[\u200B\u200C\u200D\uFE0F]/g,'');
+  const wild = cfg.wild ? norm(cfg.wild) : null;
+  const scatter = cfg.scatter ? norm(cfg.scatter) : null;
+  const pay = {};
+  Object.entries(cfg.pay).forEach(([k,v])=>{ pay[norm(k)] = v; });
+
+  // Normalisiertes Grid-Abbild
+  const G = [];
+  for(let r=0;r<rows;r++){ G[r]=[]; for(let c=0;c<cols;c++) G[r][c]=norm(slotGrid[r][c]); }
+
+  // Scatter überall zählen
+  if(scatter){
+    for(let r=0;r<rows;r++) for(let c=0;c<cols;c++) if(G[r][c]===scatter) scatterCount++;
   }
 
-  PAYLINES.forEach((line)=>{
-    // collect symbols on this line
-    const lineSyms=line.map((row,col)=>slotGrid[row][col]);
-    // find longest run from left, wilds count
-    const first = cfg.wild && lineSyms[0]===cfg.wild ? (lineSyms.find(s=>s!==cfg.wild)||lineSyms[0]) : lineSyms[0];
-    let count=0;
-    for(let i=0;i<cols;i++){
-      const s=lineSyms[i];
-      if(s===first||(cfg.wild&&s===cfg.wild)) count++;
-      else break;
-    }
-    const minMatch = cols <= 3 ? 2 : 3; // on small grids, 2 in a row wins
-    if(count>=minMatch && cfg.pay[first]){
-      const mult = count===2?0.5:count===3?1:count===4?3:6;
-      const win = bet * cfg.pay[first] * mult;
-      totalWinAmt += win;
-      for(let i=0;i<count;i++) winCells.add(`${line[i]}_${i}`);
-    }
-  });
+  // Prüft, ob zwei Symbole in einer Reihe als "gleich" gelten (Wild passt zu allem außer Scatter)
+  const matches=(a,b)=>{
+    if(a===scatter||b===scatter) return false; // Scatter bildet nie eine Linie
+    if(a===b) return true;
+    if(wild && (a===wild||b===wild)) return true;
+    return false;
+  };
 
-  // scatter wins
-  if(scatterCount>=2){
-    totalWinAmt += bet * 10 * scatterCount;
-    for(let r=0;r<rows;r++) for(let c=0;c<cols;c++) if(slotGrid[r][c]===cfg.scatter) winCells.add(`${r}_${c}`);
+  // Jede Zeile ist eine horizontale Gewinnlinie.
+  // Pro Zeile zählt nur EINE Reihe – die wertvollste. Mehrere getrennte
+  // Blöcke gleicher Symbole in derselben Zeile geben NICHT mehrfach Gewinn.
+  const segments=[]; // einzelne Gewinne für die Sequenz-Animation
+  for(let r=0;r<rows;r++){
+    let bestWin=0, bestStart=-1, bestEnd=-1, bestSym=null, bestLen=0;
+    let c=0;
+    while(c<cols){
+      // Basissymbol des Blocks bestimmen (erstes Nicht-Wild-Symbol)
+      let base=null;
+      let end=c;
+      while(end<cols){
+        const s=G[r][end];
+        if(base===null){
+          if(s===scatter) break;           // Scatter beendet/überspringt Block
+          if(wild && s===wild){ end++; continue; } // führende Wilds
+          base=s; end++;
+        } else if(matches(base,s)){
+          end++;
+        } else break;
+      }
+      // Falls Block nur aus Wilds bestand, Basis = Wild
+      if(base===null && end>c && wild && G[r][c]===wild) base=wild;
+
+      const len=end-c;
+      if(base && base!==scatter && pay[base] && len>=2){
+        // Je mehr gleiche in der Reihe, desto höher der Gewinn.
+        const mult = len===2?1 : len===3?2 : len===4?5 : len===5?10 : len>=6?20 : 1;
+        const win = bet * pay[base] * mult;
+        if(win>bestWin){ bestWin=win; bestStart=c; bestEnd=end; bestSym=base; bestLen=len; }
+      }
+      c = (end>c) ? end : c+1;
+    }
+    // Nur den besten Block dieser Zeile werten
+    if(bestWin>0){
+      totalWinAmt += bestWin;
+      const cells=[];
+      for(let i=bestStart;i<bestEnd;i++){ winCells.add(`${r}_${i}`); cells.push(`${r}_${i}`); }
+      segments.push({type:'line', row:r, sym:bestSym, len:bestLen, amount:bestWin, cells});
+    }
   }
 
-  // highlight win cells
-  winCells.forEach(key=>{
-    const [r,c]=key.split('_');
-    const el=document.getElementById(`sc_${r}_${c}`);
-    if(el) el.classList.add('win-cell');
-  });
+  // Scatter-Bonus (2+ irgendwo)
+  if(scatter && scatterCount>=2){
+    const bonus = bet * 10 * scatterCount;
+    totalWinAmt += bonus;
+    const cells=[];
+    for(let r=0;r<rows;r++) for(let c2=0;c2<cols;c2++) if(G[r][c2]===scatter){ winCells.add(`${r}_${c2}`); cells.push(`${r}_${c2}`); }
+    segments.push({type:'scatter', count:scatterCount, amount:bonus, cells});
+  }
 
-  return {win:totalWinAmt, scatter:scatterCount};
+  return {win:totalWinAmt, scatter:scatterCount, segments};
 }
 
 function doSpin(){
   if(spinning)return;
-  if(currentGame){
+  if(currentGame && !isAdmin){
     if(bet < (currentGame.minBet||1)){showToast('Mindesteinsatz: ⚡'+(currentGame.minBet||1),'#e67e22');return;}
     if(bet > (currentGame.maxBet||10000)){showToast('Maximaleinsatz: ⚡'+(currentGame.maxBet||10000),'#e67e22');return;}
   }
-  if(bal<bet&&!(cUser&&cUser.isTestAccount)){document.getElementById('wMsg').textContent='Nicht genug Guthaben!';document.getElementById('wMsg').className='win-msg no-win';return;}
-  if(cUser&&cUser.isTestAccount&&bal<1e12)bal=999999999999;
+  if(bal<bet){document.getElementById('wMsg').textContent='Nicht genug Guthaben!';document.getElementById('wMsg').className='win-msg no-win';return;}
   bal-=bet;updBal();spinning=true;
   document.getElementById('spinBtn').disabled=true;
   document.getElementById('wMsg').textContent='';
   totalGames++;
 
   // clear win highlights
-  document.querySelectorAll('.slot-cell').forEach(c=>c.classList.remove('win-cell'));
+  document.querySelectorAll('.slot-cell').forEach(c=>c.classList.remove('win-cell','win-active'));
 
+  SFX.spin();
   buildSlotGrid(currentCfg);
   animateReels(()=>{
-    const {win, scatter}=checkSlotWin();
-    let msg='',cls='';
-    if(win>0){
-      bal+=win;updBal();totalWins++;
-      if(win>=bet*10){msg=`🏆 BIG WIN! +${fmt(win)}`;cls='win-msg win-big';}
-      else{msg=`✓ Gewinn! +${fmt(win)}`;cls='win-msg win-sm';}
-      if(scatter>=3) msg+=' · 🎰 BONUS x' + scatterCount + '!';
-    } else if(scatter>=3){
-      msg='🎰 BONUS aktiviert! x' + scatterCount + ' Multiplikator!';cls='win-msg win-sm';
-    } else{
-      msg='Kein Gewinn';cls='win-msg no-win';
+    let result;
+    try{
+      result=checkSlotWin();
+    }catch(e){
+      console.error('Spin-Auswertung fehlgeschlagen:',e);
+      result={win:0,scatter:0,segments:[]};
     }
-    vipPts+=Math.floor(bet/10)||0;
+    // vipPts + History sofort verbuchen
+    vipPts+=Math.floor(bet/10)||0; checkLevelUp();
     const now=new Date();
     const dateStr=now.getHours().toString().padStart(2,'0')+':'+now.getMinutes().toString().padStart(2,'0');
-    gameHistory.unshift({game:document.getElementById('sTitle').textContent,bet,win:win-bet,date:dateStr});
+    gameHistory.unshift({game:document.getElementById('sTitle').textContent,bet,win:result.win-bet,date:dateStr});
     if(gameHistory.length>20)gameHistory.pop();
-    document.getElementById('wMsg').textContent=msg;
-    document.getElementById('wMsg').className=cls;
-    spinning=false;
-    document.getElementById('spinBtn').disabled=false;
     persistData();
-    if(autoOn) autoTmr=setTimeout(()=>{if(!spinning)doSpin();},900);
+    // Gewinn-Präsentation (async), gibt am Ende den Button frei
+    presentWin(result).catch(e=>console.error(e)).finally(()=>{
+      spinning=false;
+      document.getElementById('spinBtn').disabled=false;
+      if(autoOn) autoTmr=setTimeout(()=>{if(!spinning)doSpin();},1100);
+    });
   });
 }
 
+// Präsentiert Gewinne nacheinander: Zeile für Zeile mit Sound & Effekten,
+// dann große Gesamtsumme hochzählen mit Mega-Overkill-Effekten.
+async function presentWin(result){
+  const wMsg=document.getElementById('wMsg');
+  const {win, scatter, segments}=result;
+
+  if(!win || win<=0){
+    if(scatter>=2){ wMsg.textContent='🎰 BONUS aktiviert! x'+scatter; wMsg.className='win-msg win-sm'; }
+    else { wMsg.textContent='Kein Gewinn'; wMsg.className='win-msg no-win'; SFX.lose(); }
+    return;
+  }
+
+  // Sortiere Segmente: kleinste zuerst, Höhepunkt zum Schluss (wie echtes Casino)
+  const segs=[...segments].sort((a,b)=>a.amount-b.amount);
+  const isBig = win>=bet*10;
+  const isMega = win>=bet*50;
+
+  wMsg.className='win-msg counting';
+  wMsg.textContent='';
+
+  // 1) Zeile für Zeile einzeln zeigen
+  for(let i=0;i<segs.length;i++){
+    const s=segs[i];
+    // vorherige Highlights weg (nur die aktiven zeigen)
+    document.querySelectorAll('.slot-cell.win-active').forEach(c=>c.classList.remove('win-active'));
+    s.cells.forEach(key=>{ const el=document.getElementById('sc_'+key); if(el) el.classList.add('win-active'); });
+    SFX.lineWin(i);
+    fxParticles(6, ['✨','⭐','💫'], 12);
+    const label = s.type==='scatter'
+      ? `🎰 ${s.count}× SCATTER  +${fmt(s.amount).replace('⚡ ','⚡')}`
+      : `${s.sym} ×${s.len}  +${fmt(s.amount).replace('⚡ ','⚡')}`;
+    wMsg.textContent=label;
+    await sleep(520);
+  }
+  // alle Gewinnzellen zusammen leuchten lassen
+  segs.forEach(s=>s.cells.forEach(key=>{ const el=document.getElementById('sc_'+key); if(el) el.classList.add('win-active'); }));
+
+  // 2) Big-Win Inszenierung: Slow-Mo, Bass-Drop, Banner, Blitz, Shake, Konfetti
+  if(isBig){
+    fxVeil(true);
+    fxFlash(isMega);
+    fxRays();
+    fxShake(isMega);
+    SFX.bassDrop();
+    setTimeout(()=>{ isMega?SFX.megaHit():SFX.fanfare(); }, isMega?260:180);
+    fxBanner(isMega?'MEGA WIN':'BIG WIN', '', isMega?2600:2000);
+    // Konfetti + Coins in Wellen
+    fxParticles(isMega?60:36, ['🪙','💰','⭐','✨','💎','🔥'], 30);
+    setTimeout(()=>fxParticles(isMega?50:28, ['🪙','💵','🎉','⭐','💫'], 35), 300);
+    if(isMega) setTimeout(()=>{ fxParticles(50,['🪙','💎','👑','🔥','⭐'],40); SFX.applause(); }, 600);
+    await sleep(700);
+    fxVeil(false);
+  }
+
+  // 3) Guthaben gutschreiben + Gesamtsumme hochzählen
+  totalWins++;
+  bal+=win; updBal();
+  wMsg.className='win-msg counting';
+  await new Promise(res=>{
+    fxCountUp(wMsg, 0, win, isBig?1600:900, ()=>{
+      wMsg.className = isBig ? 'win-msg win-big' : 'win-msg win-sm';
+      wMsg.textContent = (isBig?'🏆 ':'✓ ')+(isMega?'MEGA WIN! ':(isBig?'BIG WIN! ':'Gewinn! '))+'+'+fmt(win).replace('⚡ ','⚡');
+      // finaler Coin-Regen
+      fxParticles(isBig?24:10, ['🪙','💰','✨'], 25);
+      SFX.coin(); setTimeout(()=>SFX.coin(),80); setTimeout(()=>SFX.coin(),160);
+      res();
+    });
+  });
+
+  await sleep(isBig?900:500);
+  // Highlights sanft entfernen
+  document.querySelectorAll('.slot-cell.win-active').forEach(c=>c.classList.remove('win-active'));
+}
+
+
 function toggleAuto(){autoOn=!autoOn;document.getElementById('autoBtn').classList.toggle('on',autoOn);if(autoOn&&!spinning)doSpin();}
 function stopAuto(){autoOn=false;const b=document.getElementById('autoBtn');if(b)b.classList.remove('on');if(autoTmr){clearTimeout(autoTmr);autoTmr=null;}}
+function toggleSound(){soundOn=!soundOn;const b=document.getElementById('soundBtn');if(b){b.textContent=soundOn?'🔊':'🔇';b.classList.toggle('on',soundOn);}if(soundOn)actx();}
 function togglePT(){document.getElementById('payTab').classList.toggle('open');}
 
 /* ════════════════════════════════════
@@ -1989,7 +2240,7 @@ function bjResolve(){
   
   if(win>0){bal+=win;updBal();}
   document.getElementById('bjStatus').textContent=msg;
-  vipPts+=Math.floor(bjBet/10)||0;
+  vipPts+=Math.floor(bjBet/10)||0; checkLevelUp();
   const now=new Date();
   gameHistory.unshift({game:'Blackjack',bet:bjBet,win:win-bjBet,date:now.getHours().toString().padStart(2,'0')+':'+now.getMinutes().toString().padStart(2,'0')});
   if(gameHistory.length>20)gameHistory.pop();
@@ -2154,7 +2405,7 @@ function rlResolve(result){
   }
 
   const totalBet=rlBets.reduce((s,b)=>s+b.amount,0);
-  vipPts+=Math.floor(totalBet/10)||0;
+  vipPts+=Math.floor(totalBet/10)||0; checkLevelUp();
   const now=new Date();
   gameHistory.unshift({game:'Roulette',bet:totalBet,win:totalWinAmt-totalBet,date:now.getHours().toString().padStart(2,'0')+':'+now.getMinutes().toString().padStart(2,'0')});
   if(gameHistory.length>20)gameHistory.pop();
@@ -2172,8 +2423,10 @@ let avatarImg=null;
 function saveKey(username){return 'casino_'+username.replace(/[^a-z0-9]/gi,'_');}
 function persistData(){
   if(!cUser)return;
+  if(isAdmin)return; // Admin-Testmodus wird nicht gespeichert
   const data={bal,vipPts,totalGames,totalWins,gameHistory:gameHistory.slice(0,20),
     avatarColor,avatarImg:avatarImg||null,
+    gridUpgrades:{rows:gridUpgrades.rows||0,cols:gridUpgrades.cols||0}, vipLevelSeen:vipLevelSeen||0,
     profile:{username:cUser.username,bio:cUser.bio||''},
     loanDebt:loanDebt||0, loanDeadline:loanDeadline||null, loanCount:loanCount||0};
   localStorage.setItem(saveKey(cUser.username),JSON.stringify(data));
@@ -2229,6 +2482,84 @@ function refreshVip(){
     if(badge)badge.remove();
     if(l.name===lv.name){const b=document.createElement('div');b.className='vip-current-badge';b.textContent='AKTUELL';el.appendChild(b);}
   });
+}
+
+// Prüft nach jedem Punktezuwachs, ob ein neues VIP-Level erreicht wurde.
+// Pro Aufstieg darf der Spieler wählen: neue Zeile (horizontal) ODER neue Spalte (vertikal).
+let _gridUpgradeQueue=0, _gridUpgradeOpen=false;
+function checkLevelUp(){
+  if(isAdmin) return; // Admin hat ohnehin schon alles
+  const curIdx=getVipLevelIdx();
+  if(curIdx>vipLevelSeen){
+    _gridUpgradeQueue += (curIdx - vipLevelSeen);
+    vipLevelSeen = curIdx;
+    if(!_gridUpgradeOpen) showGridUpgradeDialog();
+  }
+}
+
+function showGridUpgradeDialog(){
+  if(_gridUpgradeQueue<=0) return;
+  _gridUpgradeOpen=true;
+  const cur=getGridSize();
+  const canRow = (BASE_GRID.rows+(gridUpgrades.rows||0)) < MAX_ROWS;
+  const canCol = (BASE_GRID.cols+(gridUpgrades.cols||0)) < MAX_COLS;
+  const lv=getVipLevel();
+
+  const previewGrid=(addRow,addCol)=>{
+    const r=cur.rows+(addRow?1:0), c=cur.cols+(addCol?1:0);
+    let cells='';
+    for(let y=0;y<r;y++)for(let x=0;x<c;x++){
+      const isNew=(addRow&&y===r-1)||(addCol&&x===c-1);
+      cells+=`<div class="gu-cell${isNew?' new':''}"></div>`;
+    }
+    return `<div class="gu-preview" style="grid-template-columns:repeat(${c},15px);">${cells}</div>`;
+  };
+
+  const rowOpt=`<div class="gu-opt${canRow?'':' disabled'}" onclick="chooseGridUpgrade('rows')">
+    <div class="gu-opt-head"><span class="gu-dir">⬇️</span> Neue Zeile (horizontal)</div>
+    ${previewGrid(true,false)}
+    <div class="gu-opt-desc">Neues Feld: <b>${Math.min(MAX_ROWS,cur.rows+1)}×${cur.cols}</b><br>Mehr Gewinnlinien = mehr Chancen pro Spin.</div>
+  </div>`;
+  const colOpt=`<div class="gu-opt${canCol?'':' disabled'}" onclick="chooseGridUpgrade('cols')">
+    <div class="gu-opt-head"><span class="gu-dir">➡️</span> Neue Spalte (vertikal)</div>
+    ${previewGrid(false,true)}
+    <div class="gu-opt-desc">Neues Feld: <b>${cur.rows}×${Math.min(MAX_COLS,cur.cols+1)}</b><br>Längere Reihen möglich = höhere Multiplikatoren.</div>
+  </div>`;
+
+  const ov=document.createElement('div');
+  ov.className='grid-up-overlay';
+  ov.id='gridUpOverlay';
+  ov.innerHTML=`<div class="grid-up-box">
+    <div class="gu-crown">👑</div>
+    <div class="gu-title">${lv.icon||''} ${lv.name} erreicht!</div>
+    <div class="gu-sub">Glückwunsch zum Aufstieg! Du darfst dein Spielfeld <strong>dauerhaft erweitern</strong>.<br>Die Wahl gilt für alle Spiele${_gridUpgradeQueue>1?` · noch <strong>${_gridUpgradeQueue}</strong> Erweiterungen offen`:''}.</div>
+    <div class="gu-options">${rowOpt}${colOpt}</div>
+    <div class="gu-cur">Aktuelles Feld: ${cur.rows}×${cur.cols}</div>
+  </div>`;
+  document.body.appendChild(ov);
+  try{ SFX.levelUp(); fxParticles(24,['👑','⭐','✨','🎉'],25); }catch(e){}
+}
+
+function chooseGridUpgrade(dir){
+  if(dir==='rows' && (BASE_GRID.rows+(gridUpgrades.rows||0))<MAX_ROWS) gridUpgrades.rows=(gridUpgrades.rows||0)+1;
+  else if(dir==='cols' && (BASE_GRID.cols+(gridUpgrades.cols||0))<MAX_COLS) gridUpgrades.cols=(gridUpgrades.cols||0)+1;
+  else return;
+  _gridUpgradeQueue--;
+  const ov=document.getElementById('gridUpOverlay');
+  if(ov)ov.remove();
+  persistData();
+  const gs=getGridSize();
+  showToast(`✓ Feld erweitert auf ${gs.rows}×${gs.cols}!`,'#1fb5ad');
+  // Offenes Slot-Spiel live neu aufbauen
+  if(currentGameType==='slot' && document.getElementById('sModal') && document.getElementById('sModal').classList.contains('open')){
+    buildSlotGrid(currentCfg); renderSlotGrid(); buildPT();
+    const _gs=getGridSize();
+    const _sl=document.getElementById('sLines'); if(_sl)_sl.textContent=getPaylines(_gs.rows,_gs.cols).length;
+    const _sgs=document.getElementById('sGridSize'); if(_sgs)_sgs.textContent=_gs.rows+'×'+_gs.cols;
+  }
+  try{ renderGames(document.querySelector('.cat-btn.active')?.dataset.cat||'all'); }catch(e){}
+  if(_gridUpgradeQueue>0){ setTimeout(()=>showGridUpgradeDialog(),400); }
+  else { _gridUpgradeOpen=false; }
 }
 
 /* ── PROFILE ── */
@@ -2334,6 +2665,10 @@ function doLogin(){
   err.classList.remove('show');cUser=found;launch();
 }
 function socialLogin(){cUser={pw:'',username:'SocialUser'};launch();}
+function adminQuickLogin(){
+  cUser=USERS.find(x=>x.isAdmin)||{username:'admin',isAdmin:true};
+  launch();
+}
 function doReg(){
   const u=document.getElementById('rUser').value.trim();
   const p=document.getElementById('rPw').value;
@@ -2349,33 +2684,37 @@ function doReg(){
   setTimeout(()=>{cUser=nu;launch();},1400);
 }
 function launch(){
+  isAdmin = !!(cUser && cUser.isAdmin);
   document.getElementById('authWrap').style.display='none';
   document.getElementById('casinoApp').style.display='block';
   bal=0;vipPts=0;totalGames=0;totalWins=0;gameHistory=[];avatarColor='#7c3aed,#a855f7';avatarImg=null;
   loanDebt=0;loanDeadline=null;loanCount=0;totalInterestPaid=0;
+  gridUpgrades={rows:0,cols:0}; vipLevelSeen=0; _gridUpgradeQueue=0; _gridUpgradeOpen=false;
+  const _oldOv=document.getElementById('gridUpOverlay'); if(_oldOv)_oldOv.remove();
   if(loanTimerInterval){clearInterval(loanTimerInterval);loanTimerInterval=null;}
   if(sessionTimerInterval){clearInterval(sessionTimerInterval);sessionTimerInterval=null;}
   sessionStart=Date.now();
   startSessionTimer();
   loadData();
-  // TEST ACCOUNT: unendlich Geld + Diamond VIP (alles freigeschaltet)
-  if(cUser && cUser.isTestAccount){
-    bal=999999999999;
-    vipPts=99999;
-    avatarColor='#d4a843,#f0c060';
+  if(isAdmin){
+    // Admin-Testmodus: alles freischalten, unendlich Geld, keine Schulden, volles Feld
+    bal=ADMIN_BAL;
+    vipPts=999999999; // höchstes VIP-Level -> alle Spiele frei
+    loanDebt=0;loanDeadline=null;loanCount=0;
+    gridUpgrades={rows:2,cols:2}; // Admin startet mit großem Feld (3×5)
+    vipLevelSeen=VIP_LEVELS.length-1;
+    document.body.classList.add('admin-mode');
+  } else {
+    document.body.classList.remove('admin-mode');
   }
   renderUserAvatar();
   document.getElementById('uNm').textContent=cUser.username||'Spieler';
-  if(cUser && cUser.isTestAccount){
-    const badge=document.createElement('span');
-    badge.textContent='∞ TEST';
-    badge.style.cssText='background:linear-gradient(135deg,#b8860b,#f0c060);color:#1a1000;font-size:9px;font-weight:800;padding:2px 7px;border-radius:2px;letter-spacing:1px;margin-left:6px;vertical-align:middle;';
-    document.getElementById('uNm').appendChild(badge);
-  }
   updBal();showPage('games');renderGames('all');startTickers();
-  if(cUser && cUser.isTestAccount){
-    // Test account: skip loanshark
-  } else if(loanDebt>0 && loanDeadline && loanDeadline > Date.now()){
+  if(isAdmin){
+    // Kein Loanshark / Game Over für Admin
+    return;
+  }
+  if(loanDebt>0 && loanDeadline && loanDeadline > Date.now()){
     startDebtTimer();
     setTimeout(()=>openLoanshark(), 600);
   } else if(loanDebt>0){
@@ -2445,6 +2784,7 @@ function getEscalatedOffers(){
 }
 
 function openLoanshark(mandatory){
+  if(isAdmin)return; // Admin braucht keinen Kredit
   const isMandatory = mandatory || loanDebt === 0; // Kein Kredit aktiv = immer Pflicht
 
   // Zitate
@@ -2808,8 +3148,11 @@ function restartAfterGameOver(){
 
 
 function updBal(){
-  document.getElementById('balVal').textContent=fmt(bal);
-  if(document.getElementById('statBal'))document.getElementById('statBal').textContent=fmt(bal);
+  // Admin: Guthaben bleibt "unendlich"
+  if(isAdmin){ bal=ADMIN_BAL; }
+  document.getElementById('balVal').textContent = isAdmin ? '∞' : fmt(bal);
+  if(document.getElementById('statBal'))document.getElementById('statBal').textContent = isAdmin ? '∞' : fmt(bal);
+  if(isAdmin) return; // kein Pleite-/Kredit-Trigger im Admin-Modus
   // Wenn Guthaben auf 0 fällt → Kreditfenster öffnen (nur wenn kein Game Over und kein aktiver Kredit läuft)
   if(bal<=0 && loanDebt===0 && document.getElementById('gameOverScreen').style.display==='none'){
     clearTimeout(window._brokeTimer);
@@ -2829,7 +3172,7 @@ function filterG(cat,btn){
   if(btn){document.querySelectorAll('.cat-btn').forEach(c=>c.classList.remove('active'));btn.classList.add('active');}
   showPage('games');renderGames(cat);
 }
-function getVipLevel(){
+function getVipLevelIdx(){
   let lvl=0;
   for(let i=VIP_LEVELS.length-1;i>=0;i--){if(vipPts>=VIP_LEVELS[i].pts){lvl=i;break;}}
   return lvl;
@@ -2846,7 +3189,7 @@ function showVipLockMsg(gameName,reqName){
 function renderGames(cat){
   const grid=document.getElementById('gGrid');grid.innerHTML='';
   const filtered=cat==='all'?GAMES:GAMES.filter(g=>g.cat.includes(cat));
-  const curVip=getVipLevel();
+  const curVip=getVipLevelIdx();
   filtered.forEach((g,_)=>{
     const idx=GAMES.indexOf(g);
     const locked=(g.vipReq||0)>curVip;
@@ -2857,7 +3200,7 @@ function renderGames(cat){
     const lockOverlay=locked?`<div class="g-lock-overlay"><div class="g-lock-icon">🔒</div><div class="g-lock-label">${reqName}<br>VIP erforderlich</div></div>`:'';
     const hoverOverlay=locked?'':`<div class="g-overlay"><button class="g-play" onclick="event.stopPropagation();openSlot(${idx})">Spielen</button><button class="g-demo" onclick="event.stopPropagation();openSlot(${idx})">Demo</button></div>`;
     const riskColor={'Niedrig':'#27ae60','Mittel':'#f0c060','Hoch':'#e67e22','Sehr Hoch':'#e74c3c','Extrem':'#a855f7'}[g.risk||'Mittel']||'#aaa';
-    const _gsize = VIP_GRID[g.vipReq||0];
+    const _gsize = getGridSize();
     const _glines = getPaylines(_gsize.rows, _gsize.cols).length;
     grid.innerHTML+=`<div class="g-card${locked?' locked':''}" onclick="openSlot(${idx})">
       <div class="g-thumb ${g.bg}"><div class="g-thumb-inner" style="${locked?'opacity:0.3;filter:grayscale(1)':''}">${g.e}</div>${badge}${lockOverlay}${hoverOverlay}
@@ -2872,7 +3215,7 @@ function renderGames(cat){
 }
 function openGame(idx){
   const g=GAMES[idx];
-  const curVip=getVipLevel();
+  const curVip=getVipLevelIdx();
   if((g.vipReq||0)>curVip){
     const reqName=VIP_LEVELS[g.vipReq||0]?VIP_LEVELS[g.vipReq||0].name:'Bronze';
     showVipLockMsg(g.n,reqName);
@@ -2956,7 +3299,7 @@ function openGame(idx){
     const _mw=document.getElementById('sMaxWin');if(_mw) _mw.textContent=g.maxWin||'-';
     const _mb=document.getElementById('sMinBet');if(_mb) _mb.textContent='⚡'+(g.minBet||1)+' – Max ⚡'+(g.maxBet||100);
     // update grid size info
-    const _gs = VIP_GRID[g.vipReq||0];
+    const _gs = getGridSize();
     const _lines = getPaylines(_gs.rows, _gs.cols).length;
     const _sl = document.getElementById('sLines'); if(_sl) _sl.textContent = _lines;
     const _sgs = document.getElementById('sGridSize'); if(_sgs) _sgs.textContent = _gs.rows+'×'+_gs.cols;
